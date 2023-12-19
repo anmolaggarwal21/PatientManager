@@ -1,0 +1,115 @@
+﻿@page "/EditPatient/{Id}"
+@inherits EditPatientDetailBase
+@using Entities;
+<h3>Edit Patient</h3>
+
+<MudCard>
+	<MudForm Model="@model" @ref="@form" Validation="@(patientValidator.ValidateValue)" ValidationDelay="0">
+		<MudCardContent>
+			<MudTextField @bind-Value="model.FullName"
+						  For="@(() => model.FullName)"
+						  Immediate="true"
+						  Label="Full Name" />
+			<MudDatePicker @bind-Date="model.DOB"
+						   For="@(() => model.DOB)"
+						   Label="Date Of Birth" Editable="true" Mask="@(new DateMask("MM/dd/yyyy"))" DateFormat="MM/dd/yyyy" Placeholder="en-US Date"></MudDatePicker>
+			<MudSelect T="GenderEnum" Label="Gender" AnchorOrigin="Origin.BottomCenter" @bind-Value="model.Gender">
+				@foreach (var value in genderTypes)
+				{
+					<MudSelectItem T="GenderEnum" Value="@value">
+						@value.ToString()
+					</MudSelectItem>
+				}
+			</MudSelect>
+			<MudTextField @bind-Value="model.PhoneNumber"
+						  For="@(() => model.PhoneNumber)"
+						  Immediate="true"
+						  Label="Phone Number" Mask="@(new PatternMask("000 000 0000"))" />
+
+			<MudSelect T="ProviderEntity" Label="Provider" AnchorOrigin="Origin.BottomCenter" @bind-Value="model.Provider" For="@(() => model.Provider)">
+				@foreach (var value in providers)
+				{
+					<MudSelectItem T="ProviderEntity" Value="@value">
+						@value.LegalName
+					</MudSelectItem>
+				}
+			</MudSelect>
+			<MudTextField @bind-Value="model.Address"
+						  For="@(() => model.Address)"
+						  Immediate="true"
+						  Label="Address" />
+
+
+			<MudTextField @bind-Value="model.City"
+						  For="@(() => model.City)"
+						  Immediate="true"
+						  Label="City" />
+
+			<MudSelect T="string" Label="State" AnchorOrigin="Origin.BottomCenter" @bind-Value="model.state" For="@(() => model.state)">
+				@foreach (var value in stateDetails!.states)
+				{
+					<MudSelectItem T="string" Value="@value.Key">
+						@value.Value
+					</MudSelectItem>
+				}
+			</MudSelect>
+
+			<MudTextField @bind-Value="model.ZipCode"
+						  For="@(() => model.ZipCode)"
+						  Immediate="true"
+						  Label="ZipCode" MaxLength="5" />
+
+			<MudDatePicker @bind-Date="model.AdmissionDate"
+						   For="@(() => model.AdmissionDate)"
+						   Label="Admission Date" Editable="true" Mask="@(new DateMask("MM/dd/yyyy"))" DateFormat="MM/dd/yyyy"></MudDatePicker>
+
+			<MudTextField @bind-Value="model.DiagnosisCode1"
+						  For="@(() => model.DiagnosisCode1)"
+						  Immediate="true"
+						  Label="DiagnosisCode1" />
+			<MudTextField @bind-Value="model.DiagnosisCode2"
+						  For="@(() => model.DiagnosisCode2)"
+						  Immediate="true"
+						  Label="DiagnosisCode2" />
+			<MudTextField @bind-Value="model.DiagnosisCode3"
+						  For="@(() => model.DiagnosisCode3)"
+						  Immediate="true"
+						  Label="DiagnosisCode3" />
+			<MudTextField @bind-Value="model.DiagnosisCode4"
+						  For="@(() => model.DiagnosisCode4)"
+						  Immediate="true"
+						  Label="DiagnosisCode4" />
+			<MudTextField @bind-Value="model.DiagnosisCode5"
+						  For="@(() => model.DiagnosisCode5)"
+						  Immediate="true"
+						  Label="DiagnosisCode5" />
+			<MudTextField @bind-Value="model.DiagnosisCode6"
+			For="@(() => model.DiagnosisCode6)"
+			Immediate="true"
+			Label="DiagnosisCode6" /> 
+
+			<MudTextField @bind-Value="model.AttendingPhysicianFullName"
+						  For="@(() => model.AttendingPhysicianFullName)"
+						  Immediate="true" Label="AttendingPhysicianFullName" />
+			<MudTextField @bind-Value="model.AttendingPhysicianNPI"
+						  For="@(() => model.AttendingPhysicianNPI)"
+						  Immediate="true"
+						  Label="AttendingPhysicianNPI" />
+			<MudTextField @bind-Value="model.ReferringPhysicianFullName"
+						  For="@(() => model.ReferringPhysicianFullName)"
+						  Immediate="true"
+						  Label="ReferringPhysicianFullName" />
+			<MudTextField @bind-Value="model.ReferringPhysicianNPI"
+						  For="@(() => model.ReferringPhysicianNPI)"
+						  Immediate="true"
+						  Label="ReferringPhysicianNPI" />
+
+
+		</MudCardContent>
+
+	</MudForm>
+	<MudCardActions>
+		<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(async () => await Submit())" Class="mr-4">Update</MudButton>
+		<MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@Cancel">Cancel</MudButton>
+	</MudCardActions>
+</MudCard>

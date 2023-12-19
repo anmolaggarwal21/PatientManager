@@ -1,0 +1,64 @@
+﻿@page "/AddProvider"
+@inherits AddProviderDetailsBase
+<h3>Add Provider</h3>
+
+<MudCard>
+	<MudForm Model="@model" @ref="@form" Validation="@(providerValidator.ValidateValue)" ValidationDelay="0">
+		<MudCardContent>
+			<MudTextField @bind-Value="model.LegalName"
+						  For="@(() => model.LegalName)"
+						  Immediate="true"
+						  Label="Legal Name" />
+
+			<MudTextField @bind-Value="model.PhoneNumber"
+						  For="@(() => model.PhoneNumber)"
+						  Immediate="true"
+						  Label="Phone Number" Mask="@(new PatternMask("000 000 0000"))" />
+
+			<MudTextField @bind-Value="model.Address"
+						  For="@(() => model.Address)"
+						  Immediate="true"
+						  Label="Address" />
+
+			<MudTextField @bind-Value="model.City"
+						  For="@(() => model.City)"
+						  Immediate="true"
+						  Label="City" />
+
+			<MudSelect T="string" Label="State" AnchorOrigin="Origin.BottomCenter" @bind-Value="model.State" For="@(() => model.State)">
+				@foreach (var value in stateDetails!.states)
+				{
+					<MudSelectItem T="string" Value="@value.Key">
+						@value.Value
+					</MudSelectItem>
+				}
+			</MudSelect>
+
+			<MudTextField @bind-Value="model.ZipCode"
+						  For="@(() => model.ZipCode)"
+						  Immediate="true"
+						  Label="ZipCode" MaxLength="5" />
+
+			<MudTextField @bind-Value="model.NPI"
+						  For="@(() => model.NPI)"
+						  Immediate="true"
+						  Label="NPI" MaxLength="10" />
+
+			<MudTextField @bind-Value="model.TaxId"
+						  For="@(() => model.TaxId)"
+						  Immediate="true"
+						  Label="TaxId" MaxLength="9" />
+
+			<MudTextField @bind-Value="model.ProviderNumber"
+						  For="@(() => model.ProviderNumber)"
+						  Immediate="true"
+						  Label="ProviderNumber" />
+		</MudCardContent>
+		
+	</MudForm>
+	<MudCardActions>
+		
+		<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(async () => await Submit())" Class="mr-4">Create</MudButton>
+		<MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@Cancel">Cancel</MudButton>
+	</MudCardActions>
+</MudCard>

@@ -1,0 +1,80 @@
+﻿@page "/claim"
+@page "/claim/{patientId}"
+@using Entities;
+
+@inherits ClaimDetailsBase
+@if (!pageLoaded)
+{
+    <MudProgressLinear Color="Color.Default" Indeterminate="true" />
+}
+else
+{
+
+    <div class="mt-4">
+        @if (string.IsNullOrEmpty(headerValue))
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/AddClaim">Add</MudButton>
+        }
+        
+        @if (!string.IsNullOrEmpty(headerValue))
+        {
+            <MudText Typo="Typo.h6" Class="px-4">@headerValue</MudText>
+        }
+    <MudDivider />
+    </div>
+    <div class="mt-4">
+        <MudTable Items="@ClaimDto" Dense=true Hover=true Bordered=true Striped=false MultiSelection="false" Filter="new Func<ClaimEntity,bool>(FilterFunc1)"
+        @bind-SelectedItem="selectedItem1"  @ref="mudTable">
+        <ToolBarContent>
+                <MudText Typo="Typo.h6">Claim</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Provider</MudTh>
+                <MudTh>Patient</MudTh>
+                <MudTh>Revenue Code</MudTh>
+                <MudTh>CPT Code</MudTh>
+                <MudTh>Covered Units</MudTh>
+                <MudTh>Non Covered Units</MudTh>
+                <MudTh>Covered Charges</MudTh>
+                <MudTh>Non Covered Charges</MudTh>
+                <MudTh>Service Dates</MudTh>
+                <MudTh>Total Charges</MudTh>
+                @if (string.IsNullOrEmpty(headerValue))
+                {
+                    <MudTh>Actions</MudTh>
+                }
+                
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Provider">@context.Provider?.LegalName</MudTd>
+                <MudTd DataLabel="Patient">@context.Patient?.FullName</MudTd>
+                <MudTd DataLabel="Revenue Code">@context.RevenueCode</MudTd>
+                <MudTd DataLabel="CPT Code">@context.CPTCode</MudTd>
+                <MudTd DataLabel="Covered Units">@context.CoveredUnits</MudTd>
+                <MudTd DataLabel="Non Covered Units">@context.NonCoveredUnits</MudTd>
+                <MudTd DataLabel="Covered Charges">@context.CoveredCharges</MudTd>
+                <MudTd DataLabel="Non Covered Charges">@context.NonCoveredCharges</MudTd>
+                <MudTd DataLabel="Service Dates">@context.ServiceDate?.ToString("MM/dd/yyyy")</MudTd>
+                <MudTd DataLabel="Total Charges">@context.TotalCharges</MudTd>
+                @if (string.IsNullOrEmpty(headerValue))
+                {
+                    <MudTd>
+                        <MudMenu Icon="@Icons.Material.Filled.MoreVert">
+                            <MudMenuItem IconSize="Size.Small" IconColor="Color.Primary" Icon="@Icons.Material.Filled.Edit" OnClick="@( () => OnEditClick(context.ClaimId))">Edit</MudMenuItem>
+
+                            <MudMenuItem IconSize="Size.Small" IconColor="Color.Secondary" Icon="@Icons.Material.Filled.Delete" OnClick="@( () => OnDeleteClick(context.ClaimId))">Delete</MudMenuItem>
+
+                        </MudMenu>
+                    </MudTd>
+                }
+                
+
+            </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+    </div>
+}

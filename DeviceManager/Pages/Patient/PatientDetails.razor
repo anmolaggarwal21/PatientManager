@@ -1,0 +1,95 @@
+﻿@page "/patient"
+@page "/patient/{providerId}"
+@using Entities;
+
+@inherits PatientDetailsBase
+@if (!pageLoaded)
+{
+    <MudProgressLinear Color="Color.Default" Indeterminate="true" />
+}
+else
+{
+    <div class=" d-flex flex-grow-1 gap-4 mt-4">
+        @if (string.IsNullOrEmpty(headerValue))
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/AddPatient">Add</MudButton>
+
+
+            <MudFileUpload T="IBrowserFile" Accept=".txt" FilesChanged="UploadFiles2" MaximumFileCount="100">
+                <ButtonTemplate>
+                    <MudButton HtmlTag="label"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.CloudUpload"
+                               for="@context.Id">
+                        Only .txt files
+                    </MudButton>
+                </ButtonTemplate>
+            </MudFileUpload>
+
+        }
+        
+            @if (!string.IsNullOrEmpty(headerValue))
+            {
+                <MudText Typo="Typo.h6" Class="px-4">@headerValue</MudText>
+            }
+            
+        </div>
+
+    <MudDivider />
+    <div class="mt-4">
+        <MudTable Items="@PatientDto" Dense=true Hover=true Bordered=true Striped=false MultiSelection="false" Filter="new Func<PatientEntity,bool>(FilterFunc1)"
+        @bind-SelectedItem="selectedItem1"  @ref="mudTable">
+        <ToolBarContent>
+                <MudText Typo="Typo.h6">Patient</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Full Name</MudTh>
+            <MudTh>DOB</MudTh>
+            <MudTh>Gender</MudTh>
+            <MudTh>Phone Nuber</MudTh>
+            <MudTh>Address</MudTh>
+            <MudTh>City</MudTh>
+            <MudTh>State</MudTh>
+            <MudTh>ZipCode</MudTh>
+            <MudTh>AdmissionDate</MudTh>
+            <MudTh>Provider</MudTh>
+                @if (string.IsNullOrEmpty(headerValue))
+                {
+                    <MudTh>Actions</MudTh>
+                }
+                
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Full Name">@context.FullName</MudTd>
+                <MudTd DataLabel="DOB">@context.DOB?.ToString("MM/dd/yyyy")</MudTd>
+            <MudTd DataLabel="Gender">@context.Gender</MudTd>
+                <MudTd DataLabel="Gender">@context.PhoneNumber</MudTd>
+                <MudTd DataLabel="Address" Style="overflow-wrap:break-word;max-width:10px;">@context.Address</MudTd>
+                <MudTd DataLabel="City">@context.City</MudTd>
+                <MudTd DataLabel="State">@GetStateName(context.state)</MudTd>
+                <MudTd DataLabel="ZipCode">@context.ZipCode</MudTd>
+                <MudTd DataLabel="AdmissionDate">@context.AdmissionDate?.ToString("MM/dd/yyyy")</MudTd>
+                <MudTd DataLabel="Provider">@context.Provider?.LegalName</MudTd>
+                @if (string.IsNullOrEmpty(headerValue))
+                {
+                    <MudTd>
+                        <MudMenu Icon="@Icons.Material.Filled.MoreVert">
+                            <MudMenuItem IconSize="Size.Small" IconColor="Color.Primary" Icon="@Icons.Material.Filled.Edit" OnClick="@( () => OnEditClick(context.PatientId))">Edit</MudMenuItem>
+
+                            <MudMenuItem IconSize="Size.Small" IconColor="Color.Secondary" Icon="@Icons.Material.Filled.Delete" OnClick="@( () => OnDeleteClick(context.PatientId))">Delete</MudMenuItem>
+                            <MudMenuItem IconSize="Size.Small" Icon="@Icons.Material.Filled.Info" OnClick="@( () => OnClaimClick(context.PatientId))">Claim</MudMenuItem>
+                        </MudMenu>
+                    </MudTd>
+                }
+               
+
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+    </div>
+}

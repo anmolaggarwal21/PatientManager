@@ -1,0 +1,61 @@
+﻿@page "/provider"
+
+@using Entities;
+
+@inherits ProviderDetailsBase
+@if (!pageLoaded)
+{
+    <MudProgressLinear Color="Color.Default" Indeterminate="true" />
+}
+else
+{
+
+    <div class="mt-4">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/AddProvider">Add</MudButton>
+    <MudDivider />
+    </div>
+    <div class="mt-4">
+        <MudTable Items="@ProviderDto" Dense=true Hover=true Bordered=true Striped=false MultiSelection="false" Filter="new Func<ProviderEntity,bool>(FilterFunc1)"
+        @bind-SelectedItem="selectedItem1"  @ref="mudTable">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Provider</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Legal Name</MudTh>
+            <MudTh>Phone</MudTh>
+            <MudTh>Address</MudTh>
+            <MudTh>City</MudTh>
+            <MudTh>State</MudTh>
+            <MudTh>Zipcode</MudTh>
+            <MudTh>NPI</MudTh>
+            <MudTh>TaxId</MudTh>
+            <MudTh>Provider Number</MudTh>
+            <MudTh>Actions</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Legal Name">@context.LegalName</MudTd>
+            <MudTd DataLabel="Phone">@context.PhoneNumber</MudTd>
+                <MudTd DataLabel="Address" Style="overflow-wrap:break-word;max-width:10px;">@context.Address</MudTd>
+            <MudTd DataLabel="City">@context.City</MudTd>
+                <MudTd DataLabel="State">@GetStateName(context.State)</MudTd>
+            <MudTd DataLabel="Zipcode">@context.ZipCode</MudTd>
+            <MudTd DataLabel="NPI">@context.NPI</MudTd>
+            <MudTd DataLabel="TaxId">@context.TaxId</MudTd>
+            <MudTd DataLabel="Provider Number">@context.ProviderNumber</MudTd>
+                <MudTd>
+                    <MudMenu Icon="@Icons.Material.Filled.MoreVert">
+                        <MudMenuItem IconSize="Size.Small" IconColor="Color.Primary" Icon="@Icons.Material.Filled.Edit" OnClick="@( () => OnEditClick(context.ProviderId))">Edit</MudMenuItem>
+                    
+                        <MudMenuItem IconSize="Size.Small" IconColor="Color.Secondary" Icon="@Icons.Material.Filled.Delete" OnClick="@( () => OnDeleteClick(context.ProviderId))">Delete</MudMenuItem>
+                        <MudMenuItem IconSize="Size.Small" Icon="@Icons.Material.Filled.Info" OnClick="@( () => OnPatientClick(context.ProviderId))">Patients</MudMenuItem>
+                    </MudMenu>
+                </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+    </div>
+}

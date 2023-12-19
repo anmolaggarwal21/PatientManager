@@ -1,0 +1,65 @@
+﻿@page "/EditClaim/{Id}"
+@inherits EditClaimDetailsBase
+@using Entities;
+<h3>Edit Claim</h3>
+
+<MudCard>
+	<MudForm Model="@model" @ref="@form" Validation="@(claimValidator.ValidateValue)" ValidationDelay="0">
+		<MudCardContent> 
+			<MudSelect T="ProviderEntity" Label="Provider" AnchorOrigin="Origin.BottomCenter" Value="@model.Provider" ValueChanged="onValueChanged" For="@(() => model.Provider)">
+				@foreach (var value in providers)
+				{
+					<MudSelectItem T="ProviderEntity" Value="@value">
+						@value.LegalName
+					</MudSelectItem>
+				}
+			</MudSelect>
+			<MudSelect T="PatientEntity" Label="Patient" AnchorOrigin="Origin.BottomCenter" @bind-Value="model.Patient" For="@(() => model.Patient)">
+				@foreach (var value in patients)
+				{
+					<MudSelectItem T="PatientEntity" Value="@value">
+						@value.FullName
+					</MudSelectItem>
+				}
+			</MudSelect>
+			<MudDatePicker @bind-Date="model.ServiceDate"
+						   For="@(() => model.ServiceDate)"
+						   Label="Service Dates"></MudDatePicker>
+			<MudTextField @bind-Value="model.RevenueCode"
+						  For="@(() => model.RevenueCode)"
+						  Immediate="true"
+						  Label="Revenue Code" />
+			<MudTextField @bind-Value="model.CPTCode"
+						  For="@(() => model.CPTCode)"
+						  Immediate="true"
+						  Label="CPT Code" />
+			<MudTextField @bind-Value="model.CoveredUnits"
+						  For="@(() => model.CoveredUnits)"
+						  Immediate="true"
+						  Label="Covered Units" />
+			<MudTextField @bind-Value="model.NonCoveredUnits"
+						  For="@(() => model.NonCoveredUnits)"
+						  Immediate="true"
+						  Label="Non Covered Units" />
+			<MudTextField @bind-Value="model.CoveredCharges"
+						  For="@(() => model.CoveredCharges)"
+						  Immediate="true"
+						  Label="Covered Charges" />
+			<MudTextField @bind-Value="model.NonCoveredCharges"
+						  For="@(() => model.NonCoveredCharges)"
+						  Immediate="true"
+						  Label="Non Covered Charges" />
+			<MudTextField @bind-Value="model.TotalCharges"
+						  For="@(() => model.TotalCharges)"
+						  Immediate="true"
+						  Label="Total Charges" />
+			
+		</MudCardContent>
+		
+	</MudForm>
+	<MudCardActions>
+		
+		<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(async () => await Submit())" Class="mr-4">Create</MudButton>
+		<MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@Cancel">Cancel</MudButton>
+	</MudCardActions>
+</MudCard>
