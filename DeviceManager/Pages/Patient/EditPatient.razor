@@ -4,7 +4,7 @@
 <h3>Edit Patient</h3>
 
 <MudCard>
-	<MudForm Model="@model" @ref="@form" Validation="@(patientValidator.ValidateValue)" ValidationDelay="0">
+	<MudForm Model="@model" @ref="@form" Validation="@(patientValidator.ValidateValue)" ValidationDelay="0" >
 		<MudCardContent>
 			<MudTextField @bind-Value="model.FullName"
 						  For="@(() => model.FullName)"
@@ -111,5 +111,7 @@
 	<MudCardActions>
 		<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(async () => await Submit())" Class="mr-4">Update</MudButton>
 		<MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@Cancel">Cancel</MudButton>
+
+		
 	</MudCardActions>
 </MudCard>

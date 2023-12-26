@@ -20,9 +20,9 @@ namespace DeviceManager.Pages.Provider
 		[Parameter]
         public string? Id { get; set; }
 
-		protected override async Task OnInitializedAsync()
+        protected override async Task OnInitializedAsync()
 		{
-			if(Guid.TryParse(Id, out Guid provideId))
+			if (Guid.TryParse(Id, out Guid provideId))
 			{
 				var providerToBeEdited = await providerRepository.GetProviderById(provideId);
 				if (providerToBeEdited != null)
@@ -50,7 +50,7 @@ namespace DeviceManager.Pages.Provider
 
         protected void Cancel()
         {
-            navigationManager.NavigateTo("/provider");
+			navigationManager.NavigateTo("/provider");
         }
     }
 }

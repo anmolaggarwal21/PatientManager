@@ -38,25 +38,25 @@ namespace DeviceManager.Pages.Claim
 			.NotEmpty();
 			RuleFor(x => x.TotalCharges)
 			.NotEmpty();
-			RuleFor(x => x.ServiceDate)
+			//RuleFor(x => x.FromServiceDate)
 
-			  .Must(x =>
-			  {
-				  if (!x.HasValue || x.GetValueOrDefault() == DateTime.MinValue)
-					  return false;
+			//  .Must(x =>
+			//  {
+			//	  if (!x.HasValue || x.GetValueOrDefault() == DateTime.MinValue)
+			//		  return false;
 
-				  return true;
-			  })
-			.WithMessage("Service Date must not be empty ")
+			//	  return true;
+			//  })
+			//.WithMessage("Service Date must not be empty ")
 
-			.Must(x =>
-			{
-				if (x.GetValueOrDefault() <= DateTime.Now)
-					return true;
+			//.Must(x =>
+			//{
+			//	if (x.GetValueOrDefault() <= DateTime.Now)
+			//		return true;
 
-				return false;
-			})
-			.WithMessage("Service Date cannot be greater than today's date ");
+			//	return false;
+			//})
+			//.WithMessage("Service Date cannot be greater than today's date ");
 		}
         
 

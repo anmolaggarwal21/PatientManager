@@ -1,0 +1,22 @@
+﻿@inherits PatientDetailsDialogBase
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Info" Class="mr-3 mb-n1" />
+            Patient
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <div class="d-flex flex-column py-1">
+            <MudTextField Value=@patientEntity?.DiagnosisCode1 Label="Diagnosis Code1" ReadOnly="true" />
+            <MudTextField Value=@patientEntity?.DiagnosisCode2 Label="Diagnosis Code2" ReadOnly="true" />
+            <MudTextField Value=@patientEntity?.DiagnosisCode3 Label="Diagnosis Code3" ReadOnly="true" />
+            <MudTextField Value=@patientEntity?.DiagnosisCode4 Label="Diagnosis Code4" ReadOnly="true" />
+            <MudTextField Value=@patientEntity?.DiagnosisCode5 Label="Diagnosis Code5" ReadOnly="true" />
+            <MudTextField Value=@patientEntity?.DiagnosisCode6 Label="Diagnosis Code6" ReadOnly="true" />
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Close</MudButton>
+    </DialogActions>
+</MudDialog>

@@ -15,14 +15,14 @@ else
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/AddPatient">Add</MudButton>
 
 
-            <MudFileUpload T="IBrowserFile" Accept=".txt" FilesChanged="UploadFiles2" MaximumFileCount="100">
+            <MudFileUpload T="IBrowserFile" Accept=".pdf" FilesChanged="UploadFiles2" MaximumFileCount="100">
                 <ButtonTemplate>
                     <MudButton HtmlTag="label"
                                Variant="Variant.Filled"
                                Color="Color.Primary"
                                StartIcon="@Icons.Material.Filled.CloudUpload"
                                for="@context.Id">
-                        Only .txt files
+                        Upload .pdf files
                     </MudButton>
                 </ButtonTemplate>
             </MudFileUpload>
@@ -63,16 +63,20 @@ else
                 
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="Full Name">@context.FullName</MudTd>
+                <MudTd DataLabel="Full Name">@context.FullName
+                    <MudIconButton Icon="@Icons.Material.Filled.Info" aria-label="Info" OnClick="@(() => OpenPatientDetails(context))"></MudIconButton>
+                </MudTd>
                 <MudTd DataLabel="DOB">@context.DOB?.ToString("MM/dd/yyyy")</MudTd>
-            <MudTd DataLabel="Gender">@context.Gender</MudTd>
+                <MudTd DataLabel="Gender">@context.Gender</MudTd>
                 <MudTd DataLabel="Gender">@context.PhoneNumber</MudTd>
                 <MudTd DataLabel="Address" Style="overflow-wrap:break-word;max-width:10px;">@context.Address</MudTd>
                 <MudTd DataLabel="City">@context.City</MudTd>
                 <MudTd DataLabel="State">@GetStateName(context.state)</MudTd>
                 <MudTd DataLabel="ZipCode">@context.ZipCode</MudTd>
                 <MudTd DataLabel="AdmissionDate">@context.AdmissionDate?.ToString("MM/dd/yyyy")</MudTd>
-                <MudTd DataLabel="Provider">@context.Provider?.LegalName</MudTd>
+                <MudTd DataLabel="Provider">@context.Provider?.LegalName
+                    <MudIconButton Icon="@Icons.Material.Filled.MedicalInformation" aria-label="Info" OnClick="@(() => OpenProviderDetails(context.Provider!.ProviderId))"></MudIconButton>
+                </MudTd>
                 @if (string.IsNullOrEmpty(headerValue))
                 {
                     <MudTd>

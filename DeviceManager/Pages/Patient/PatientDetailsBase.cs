@@ -6,6 +6,8 @@ using DeviceManager.Repository;
 using DeviceManager.Shared;
 using ElectronNET.API.Entities;
 using Entities;
+using iTextSharp.text.pdf;
+using iTextSharp.text.pdf.parser;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
@@ -14,6 +16,7 @@ using SocketIOClient.Messages;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Reflection.PortableExecutable;
 using System.Security.Cryptography;
 
 namespace DeviceManager.Pages.Patient
@@ -74,10 +77,10 @@ namespace DeviceManager.Pages.Patient
 
         protected void OnEditClick(Guid id)
         {
-            var b = mudTable.SelectedItem;
-            var a = selectedItem1;
+           
 			navigationManager.NavigateTo($"/EditPatient/{id}");
 		}
+
 
         protected void OnClaimClick(Guid PatientId)
         {
@@ -101,12 +104,26 @@ namespace DeviceManager.Pages.Patient
         {
              string fileContent = "";
              files.Add(file);
-            
+
             long maxsize = 512000;
 
             var buffer = new byte[file.Size];
-            await file.OpenReadStream(maxsize).ReadAsync(buffer);
-            fileContent = System.Text.Encoding.UTF8.GetString(buffer);
+            //await file.OpenReadStream(maxsize);
+            var copy = new MemoryStream();
+            Stream stream = file.OpenReadStream();
+            await stream.CopyToAsync(copy);
+            copy.Position = 0;
+           PdfReader reader = new PdfReader(copy);
+                string text = string.Empty;
+                for (int page = 1; page <= reader.NumberOfPages; page++)
+                {
+                    fileContent += PdfTextExtractor.GetTextFromPage(reader, page);
+                }
+                reader.Close();
+            
+                //fileContent = System.Text.Encoding.UTF8.GetString(buffer);
+
+                
             await ParsePatientAndProviderText(fileContent);
             //TODO upload the files to the server
         }
@@ -114,13 +131,13 @@ namespace DeviceManager.Pages.Patient
         private async Task ParsePatientAndProviderText(string result)
         {
             string line= string.Empty;
-            string[] lines = result.Split("\r\n");
+            string[] lines = result.Split("\n");
             PatientEntity patientEntity = new PatientEntity();
             ProviderEntity providerEntity = new ProviderEntity();
             string errorMessage = string.Empty;
             try
             {
-                if (lines != null && lines.Length >= 1)
+                if (lines != null && lines.Length >= 2)
                 {
                     var providerName = lines[0];
 
@@ -128,13 +145,24 @@ namespace DeviceManager.Pages.Patient
                     if (string.IsNullOrEmpty(providerName))
                     {
                         errorMessage = "Provider Name is required";
+                        ShowPDFConfirmationDialog(true, $"Error while parsing with error as {errorMessage}");
+                        return;
                     }
                     providerEntity.LegalName = providerName;
+                    string providerDetails = string.Empty;
 
-                    var providerDetails = lines[1];
+                    if (string.IsNullOrEmpty(lines[1]) || string.IsNullOrWhiteSpace(lines[1]))
+                    {
+                        providerDetails = lines[2];
+                    }
+                    else
+                    {
+                        providerDetails = lines[1];
+                    }
                     if (string.IsNullOrEmpty(providerDetails))
                     {
                         errorMessage = "Provider Details is required";
+                        
                     }
                     var providerDetailsAfterCommaSplit = providerDetails.Split(",");
                     if(providerDetailsAfterCommaSplit != null && providerDetailsAfterCommaSplit.Length > 0)
@@ -168,19 +196,27 @@ namespace DeviceManager.Pages.Patient
                         }
 
                         var telephoneSplit = providerDetailsAfterCommaSplit[2].Split("Tel:");
-                        if(telephoneSplit == null || telephoneSplit.Length <= 1)
+                        if(telephoneSplit != null && telephoneSplit.Length >= 1)
                         {
-                            errorMessage = "Provider  phone number is required";
+                            var number = telephoneSplit[1].Replace(" ", "").Replace("(", "").Replace(")", "").Replace("-", "");
+                            var phone = number.Substring(0, 10);
+                            if (long.TryParse(phone, out long phoneNumber))
+                            {
+                                providerEntity.PhoneNumber = phoneNumber.ToString();
+                            }
+                            else
+                            {
+                                providerEntity.PhoneNumber = "9999999999";
+                            }
                         }
-                        var number = telephoneSplit[1].Replace(" ", "").Replace("(", "").Replace(")", "").Replace("-", "");
-                        var phone = number.Substring(0, 10);
-                        if(!long.TryParse(phone, out long phoneNumber))
+                        else
                         {
-                            errorMessage = "Provider  phone number is required";
+                            providerEntity.PhoneNumber = "9999999999";
                         }
+                        
                         providerEntity.State = state.Trim();
                         providerEntity.City = city.Trim();
-                        providerEntity.PhoneNumber = phoneNumber.ToString();
+                        
                         providerEntity.Address = providerAddress.Trim();
                         providerEntity.LegalName = providerName.Trim();
                         providerEntity.ZipCode = zip;
@@ -281,15 +317,24 @@ namespace DeviceManager.Pages.Patient
                             var phone = line.Substring(5, 15);
                             if (string.IsNullOrEmpty(phone))
                             {
-                                errorMessage = "Patient phone number required";
+                                patientEntity.PhoneNumber = "9999999999";
                             }
-                            phone = phone.Trim();
-                            phone = phone.Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", "").Trim();
-                            if (!long.TryParse(phone, out long phoneNumber))
+                            else
                             {
-                                errorMessage = "Patient phone number required";
+
+
+                                phone = phone.Trim();
+                                phone = phone.Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", "").Trim();
+                                if (!long.TryParse(phone, out long phoneNumber))
+                                {
+                                    patientEntity.PhoneNumber = "9999999999";
+                                }
+                                else
+                                {
+                                    patientEntity.PhoneNumber = phoneNumber.ToString();
+                                }
+                                
                             }
-                            patientEntity.PhoneNumber = phoneNumber.ToString();
                         }
 
                         else if (line.StartsWith("GENDER"))
@@ -307,11 +352,14 @@ namespace DeviceManager.Pages.Patient
                         }
                         else if (line.StartsWith("MR#"))
                         {
-                            var dob = line.Substring(28, 10);
-                            var date = ConvertToDateTime(dob);
-                            if (date != null)
+                           if (line.IndexOf("DOB") > 0)
                             {
-                                patientEntity.DOB = date;
+                                var dob = line.Substring(line.IndexOf("DOB") + 3, 11);
+                                var date = ConvertToDateTime(dob);
+                                if (date != null)
+                                {
+                                    patientEntity.DOB = date;
+                                }
                             }
 
 
@@ -334,6 +382,10 @@ namespace DeviceManager.Pages.Patient
                             if (date != null)
                             {
                                 patientEntity.AdmissionDate = date;
+                            }
+                            else
+                            {
+                                patientEntity.AdmissionDate = DateTime.Now;
                             }
                         }
                         else if (line.StartsWith("MEDICAL DIRECTOR"))
@@ -409,6 +461,10 @@ namespace DeviceManager.Pages.Patient
                         providerEntity.ProviderId = providerDetails[0].ProviderId;
                         patientEntity.Provider = providerDetails[0];
                     }
+                }
+                if(patientEntity.AdmissionDate == null)
+                {
+                    patientEntity.AdmissionDate = DateTime.Now;
                 }
 
                 PatientEntitylFluentValidator patientValidator = new PatientEntitylFluentValidator();
@@ -495,6 +551,26 @@ namespace DeviceManager.Pages.Patient
 
                 Dialog.Show<PDFConfirmation>("Result", parameters, options);
             }
+        }
+
+        protected async void OpenProviderDetails(Guid providerId)
+        {
+            var parameters = new DialogParameters<ProviderDetailsDialog>();
+            parameters.Add(x => x.Id, providerId.ToString());
+
+            var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.Medium, DisableBackdropClick = true, FullWidth = true };
+
+            Dialog.Show<ProviderDetailsDialog>("Provider Details", parameters, options);
+        }
+
+        protected async void OpenPatientDetails(PatientEntity patientEntity)
+        {
+            var parameters = new DialogParameters<PatientDetailsDialog>();
+            parameters.Add(x => x.patientEntity, patientEntity);
+
+            var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.Medium, DisableBackdropClick = true, FullWidth = true };
+
+            Dialog.Show<PatientDetailsDialog>("Patient Details", parameters, options);
         }
     }
 }

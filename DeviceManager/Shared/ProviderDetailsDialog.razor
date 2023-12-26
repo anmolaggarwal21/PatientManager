@@ -1,0 +1,29 @@
+﻿@inherits ProviderDetailsDialogBase
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.MedicalInformation" Class="mr-3 mb-n1" />
+            Provider
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+         <div class="d-flex flex-column py-1">
+        <MudTextField Value=@providerEntity?.LegalName Label="LegalName" ReadOnly="true" />
+        <MudTextField Value=@providerEntity?.PhoneNumber Label="PhoneNumber" ReadOnly="true" />
+        <MudTextField Value=@providerEntity?.Address Label="Address" ReadOnly="true" />
+        <MudTextField Value=@providerEntity?.City Label="City" ReadOnly="true" />
+        <MudTextField Value=@providerEntity?.State Label="State" ReadOnly="true" />
+        <MudTextField Value=@providerEntity?.ZipCode Label="ZipCode" ReadOnly="true" />
+        <MudTextField Value=@providerEntity?.NPI Label="NPI" ReadOnly="true" />
+        <MudTextField Value=@providerEntity?.TaxId Label="TaxId" ReadOnly="true" />
+        <MudTextField Value=@providerEntity?.ProviderNumber Label="ProviderNumber" ReadOnly="true" />
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+}

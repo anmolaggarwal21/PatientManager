@@ -22,9 +22,12 @@
 					</MudSelectItem>
 				}
 			</MudSelect>
-			<MudDatePicker @bind-Date="model.ServiceDate"
-						   For="@(() => model.ServiceDate)"
+			<MudDatePicker @bind-Date="model.FromServiceDate"
+						   For="@(() => model.FromServiceDate)"
 						   Label="Service Dates"></MudDatePicker>
+			<MudDatePicker @bind-Date="model.ToServiceDate"
+						   For="@(() => model.ToServiceDate)"
+						   Label="To Service Dates"></MudDatePicker>
 
 			<MudTextField @bind-Value="model.RevenueCode"
 						  For="@(() => model.RevenueCode)"

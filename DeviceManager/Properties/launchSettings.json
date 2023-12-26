@@ -24,7 +24,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Electron.NET App": {
+    "Patient Claims": {
       "commandName": "Executable",
       "executablePath": "electronize",
       "commandLineArgs": "start",

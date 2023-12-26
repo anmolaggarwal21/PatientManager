@@ -39,7 +39,8 @@ else
                 <MudTh>Non Covered Units</MudTh>
                 <MudTh>Covered Charges</MudTh>
                 <MudTh>Non Covered Charges</MudTh>
-                <MudTh>Service Dates</MudTh>
+                <MudTh>From Service Dates</MudTh>
+                <MudTh>To Service Dates</MudTh>
                 <MudTh>Total Charges</MudTh>
                 @if (string.IsNullOrEmpty(headerValue))
                 {
@@ -56,7 +57,8 @@ else
                 <MudTd DataLabel="Non Covered Units">@context.NonCoveredUnits</MudTd>
                 <MudTd DataLabel="Covered Charges">@context.CoveredCharges</MudTd>
                 <MudTd DataLabel="Non Covered Charges">@context.NonCoveredCharges</MudTd>
-                <MudTd DataLabel="Service Dates">@context.ServiceDate?.ToString("MM/dd/yyyy")</MudTd>
+                <MudTd DataLabel="From Service Dates">@context.FromServiceDate?.ToString("MM/dd/yyyy")</MudTd>
+                <MudTd DataLabel="To Service Dates">@context.ToServiceDate?.ToString("MM/dd/yyyy")</MudTd>
                 <MudTd DataLabel="Total Charges">@context.TotalCharges</MudTd>
                 @if (string.IsNullOrEmpty(headerValue))
                 {

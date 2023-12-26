@@ -19,7 +19,8 @@ namespace Entities
         public string? NonCoveredUnits { get; set; }
         public decimal? CoveredCharges { get; set; }
         public decimal? NonCoveredCharges { get; set; }
-        public DateTime? ServiceDate { get; set; }
+        public DateTime? FromServiceDate { get; set; }
+        public DateTime? ToServiceDate { get; set; }
         public decimal TotalCharges { get; set; }
         public DateTime? CreateDate { get; set; }
     }

@@ -25,8 +25,13 @@ namespace DeviceManager.Pages.Patient
 		[Parameter]
         public string? Id { get; set; }
 
-		protected override async Task OnInitializedAsync()
+		
+
+        protected override async Task OnInitializedAsync()
 		{
+			
+			
+
 			if(Guid.TryParse(Id, out Guid patientId))
 			{
 				providers = await providerRepository.GetAllProvider();
