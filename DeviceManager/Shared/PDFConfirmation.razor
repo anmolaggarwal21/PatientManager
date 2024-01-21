@@ -1,9 +1,15 @@
 ﻿@inherits PDFConfirmationBase
-<MudDialog>
+<MudDialog DisableSidePadding = "true">
     <DialogContent>
-        <MudText>@ContentText</MudText>
+        <MudContainer Style="max-height: 600px;">
+            <MudText Style="white-space: pre-wrap">@ContentText</MudText>
+        </MudContainer>
     </DialogContent>
     <DialogActions>
+        @if (ShowCopy)
+        {
+            <MudButton Variant="Variant.Filled" OnClick="CopyText">Copy</MudButton>
+        }
         
         <MudButton Color="@Color" Variant="Variant.Filled" OnClick="Submit">@ButtonText</MudButton>
     </DialogActions>

@@ -26,7 +26,6 @@ else
                     </MudButton>
                 </ButtonTemplate>
             </MudFileUpload>
-
         }
         
             @if (!string.IsNullOrEmpty(headerValue))
@@ -85,6 +84,7 @@ else
 
                             <MudMenuItem IconSize="Size.Small" IconColor="Color.Secondary" Icon="@Icons.Material.Filled.Delete" OnClick="@( () => OnDeleteClick(context.PatientId))">Delete</MudMenuItem>
                             <MudMenuItem IconSize="Size.Small" Icon="@Icons.Material.Filled.Info" OnClick="@( () => OnClaimClick(context.PatientId))">Claim</MudMenuItem>
+                            <MudMenuItem IconSize="Size.Small" IconColor="Color.Tertiary" Icon="@Icons.Material.Filled.Output" OnClick="@( () => GetCobolFormat(context))">Console Output</MudMenuItem>
                         </MudMenu>
                     </MudTd>
                 }

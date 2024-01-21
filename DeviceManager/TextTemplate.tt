@@ -1,0 +1,25 @@
+﻿<#@ template  language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<html>
+    <head>
+    </head>
+    <body>
+    <p>
+NPI X881099497 <#=fullname #>   PROCESS NEW MID 
+</p>
+    </body>
+<html>
+
+
+
+<#+
+ private string fullname = "aaahhhhhh";
+ public string FullName {
+        get { return fullname; }
+        set { fullname = value; }
+    }
+
+#>

@@ -1,0 +1,36 @@
+MID 3P80K11ZR05   TOB 81A  S/LOC S B0100 OSCAR                SV:    UB-FORM  
+NPI 881099497  TRANS HOSP PROV                 PROCESS NEW MID                
+AT.CNTL#: X1335-31084          TAX#/SUB:                 TAXO.CD:             
+STMT DATES FROM 081623  TO 000000  DAYS COV      N-C       CO      LTR        
+LAST [$PATIENTLM$]              FIRST [$PATIENTFM$]   MI    DOB [$PATIENTDOB$]      
+ADDR 1 [$PATIENTADDRES$]               2 [$PATIENTCITY$]                               
+3 [$PATIENTSTATE$]                4                                CARR:      
+5                                 6                                 LOC:      
+IP 91335     SEX M MS   ADMIT DATE 081623 HR 00 TYPE 3 SRC 1 D HM      STAT   
+  COND CODES 01    02    03    04    05    06    07    08    09    10         
+OCC CDS/DATE 01 27 081623 02           03           04           05           
+             06           07           08           09           10           
+  SPAN CODES/DATES 01                  02                  03                 
+4                  05                  06                  07                 
+8                  09                  10                  FAC.ZIP 91423      
+
+
+
+
+----------------------------SCREEN 3----------------------------------------------------------------------                                                                          
+
+A Z       MEDICARE                                 Y                      
+B                                                                         
+C                                                                         
+DUE FROM PATIENT         0.00         0.00    SERV FAC NPI                
+MEDICAL RECORD NBR                    COST RPT DAYS      NON COST RPT DAYS
+DIAG CODES 01 [$PDIG1$] 02 [$PDIG2$] 03 [$PDIG3$] 04 [$PDIG4$] 05 [$PDIG5$]        
+06 [$PDIG6$] 07           08           09                 END OF POA IND  
+ADMITTING DIAGNOSIS            E CODE            HOSPICE TERM ILL IND     
+IDE                    GAF                     PRV                        
+PROCEDURE CODES AND DATES 01                02                            
+03                04                05                06                  
+ESRD HRS     ADJ REAS CD     REJ CD        NONPAY CD     ATT TAXO         
+ATT PHYS        NPI [$PANPI$]     L [$PALNAME$]        F [$PAFNA$] M    SC
+OPR PHYS        NPI               L                    F           M    SC
+OTH OPR         NPI [$PONPI$]     L [$POLNAME$]        F [$POFNA$] M    SC

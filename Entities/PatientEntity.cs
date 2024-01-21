@@ -40,6 +40,8 @@ namespace Entities
         public string? ReferringPhysicianFullName { get; set; }
         public long? ReferringPhysicianNPI { get; set; }
 
+        public string? OtherPhysicianFullName { get; set; }
+        public long? OtherPhysicianNPI { get; set; }
         public DateTime CreateDate { get; set; }
 
         public ProviderEntity Provider { get; set; }

@@ -10,14 +10,19 @@ using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using MudBlazor;
+using MudBlazor.Charts;
 using SocketIOClient.Messages;
+using System.Collections;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Reflection.PortableExecutable;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace DeviceManager.Pages.Patient
 {
@@ -100,6 +105,164 @@ namespace DeviceManager.Pages.Patient
             Dialog.Show<DeleteDialog>("Delete", parameters, options);
         }
 
+        protected void GetCobolFormat(PatientEntity patientEntity)
+        {
+            
+            string assemblyPath = Assembly.GetExecutingAssembly().Location;
+            string assemblyDirectory = string.Empty;
+            if (!string.IsNullOrEmpty(assemblyPath))
+            {
+                 assemblyDirectory = System.IO.Path.GetDirectoryName(assemblyPath);
+                Console.WriteLine($"assembly Diectoy inisde if is {assemblyDirectory}");
+            }
+            else
+            {
+                 assemblyDirectory = Directory.GetCurrentDirectory();
+                Console.WriteLine($"assembly Diectoy inisde else is {assemblyDirectory}");
+            }
+            
+            string textFile = System.IO.Path.Combine(assemblyDirectory!, "templateFile.txt");
+            Console.WriteLine($"TextFile is {textFile}");
+            string attendingFirstName = string.Empty;
+            string attendingLastName = string.Empty;
+            string otherFirstName = string.Empty;
+            string otherLastName = string.Empty;
+            
+            if (!string.IsNullOrEmpty(patientEntity!.AttendingPhysicianFullName))
+            {
+                var splitName = patientEntity!.AttendingPhysicianFullName.Split(" ");
+                 attendingFirstName = splitName[0];
+                if(splitName.Length>= 2)
+                {
+                   attendingLastName = splitName[1];
+                }
+
+
+            }
+            if (!string.IsNullOrEmpty(patientEntity!.OtherPhysicianFullName))
+            {
+                var splitName = patientEntity!.OtherPhysicianFullName.Split(" ");
+                otherFirstName = splitName[0];
+                if (splitName.Length >= 2)
+                {
+                    otherLastName = splitName[1];
+
+                }
+               
+
+
+            }
+            Dictionary<string, string?> keyValuePairs = new Dictionary<string, string?>();
+            keyValuePairs.Add("[$PATIENTLM$]", patientEntity.FullName.Split(',')[0]);
+            keyValuePairs.Add("[$PATIENTFM$]", patientEntity.FullName.Split(',')[1]);
+            keyValuePairs.Add("[$PATIENTDOB$]", patientEntity!.DOB!.GetValueOrDefault().Date.ToString("MMddyyyy"));
+            keyValuePairs.Add("[$PATIENTADDRES$]", patientEntity!.Address ?? "");
+            keyValuePairs.Add("[$PATIENTCITY$]", patientEntity!.City ?? "");
+            keyValuePairs.Add("[$PATIENTSTATE$]", patientEntity!.state ?? "");
+            keyValuePairs.Add("[$PDIG1$]", string.IsNullOrEmpty(patientEntity!.DiagnosisCode1) ? "" : patientEntity!.DiagnosisCode1.Replace(".",""));
+            keyValuePairs.Add("[$PDIG2$]", string.IsNullOrEmpty(patientEntity!.DiagnosisCode2) ? "" : patientEntity!.DiagnosisCode2.Replace(".", ""));
+            keyValuePairs.Add("[$PDIG3$]", string.IsNullOrEmpty(patientEntity!.DiagnosisCode3) ? "" : patientEntity!.DiagnosisCode3.Replace(".", ""));
+            keyValuePairs.Add("[$PDIG4$]", string.IsNullOrEmpty(patientEntity!.DiagnosisCode4) ? "" : patientEntity!.DiagnosisCode4.Replace(".", ""));
+            keyValuePairs.Add("[$PDIG5$]", string.IsNullOrEmpty(patientEntity!.DiagnosisCode5) ? "" : patientEntity!.DiagnosisCode5.Replace(".", ""));
+            keyValuePairs.Add("[$PDIG6$]", string.IsNullOrEmpty(patientEntity!.DiagnosisCode6) ? "" : patientEntity!.DiagnosisCode6.Replace(".", ""));
+            keyValuePairs.Add("[$PANPI$]", patientEntity!.AttendingPhysicianNPI != 0 ? patientEntity!.AttendingPhysicianNPI.ToString(): "");
+            keyValuePairs.Add("[$PALNAME$]", attendingLastName);
+            keyValuePairs.Add("[$PAFNA$]", attendingFirstName );
+            keyValuePairs.Add("[$PONPI$]", patientEntity!.OtherPhysicianNPI != 0 ? patientEntity!.OtherPhysicianNPI.ToString() : "");
+            keyValuePairs.Add("[$POLNAME$]", otherLastName);
+            keyValuePairs.Add("[$POFNA$]", otherFirstName);
+
+            Dictionary<string, string> replacedNewValue = new Dictionary<string, string>();
+            StringBuilder newLine= new StringBuilder();
+            
+            if (File.Exists(textFile))
+            {
+                // Read a text file line by line.
+                string[] lines = File.ReadAllLines(textFile);
+                int length = 0;
+                bool startReplacing = false;
+                StringBuilder replacedWord = new StringBuilder();
+                StringBuilder newValue = new StringBuilder();
+               
+                foreach (string line in lines)
+                {
+                    int lineLength = line.Length;
+                    var a = line;
+                    foreach (char c in line)
+                    {
+                        lineLength--;
+
+                        if (c == '[' )
+                        {
+                            replacedWord = new StringBuilder();
+                            newValue = new StringBuilder();
+                            length = 1;
+                            replacedWord.Append(c);
+                        }
+                        else if (c == ']')
+                        {
+                            replacedWord.Append(c);
+                            startReplacing = true;
+                        }
+
+                        else if ((c != ' ' || lineLength ==0 ) && length > 0 && startReplacing )
+                        {
+                            // replace here
+                            if(keyValuePairs.ContainsKey(replacedWord.ToString().Trim()))
+                            {
+                                var value = keyValuePairs[replacedWord.ToString().Trim()];
+
+                               
+                                if (value != null  && replacedWord.ToString().Length > value.Length)
+                                {
+                                     newValue.Append(value);
+                                    
+                                   
+                                    for (int i = 0; i < replacedWord.ToString().Length - value.Length; i++)
+                                    {
+                                        newValue!.Append(" ");
+                                    }
+                                }
+                              
+                                if(value != null && replacedWord.ToString().Length <= value.Length)
+                                {
+                                    newValue.Append(value.Substring(0, replacedWord.ToString().Length - 1));
+                                    newValue.Append(" ");
+                                }
+                                if(newValue != null && !string.IsNullOrEmpty(newValue.ToString()))
+                                {
+                                   a =  a.Replace(replacedWord.ToString(), newValue.ToString());
+                                  
+                                
+                                }
+                               
+                            }
+                            startReplacing = false;
+                            length = 0;
+                        }
+                        else if(length >0)
+                        {
+                            replacedWord.Append(c);
+                        }
+                         if(lineLength ==0)
+                        {
+                            replacedWord = new StringBuilder();
+                            newValue = new StringBuilder();
+                            length = 0;
+                            startReplacing = false;
+                            newLine.AppendLine(a);
+                        }
+                        if(length >= 1)
+                        {
+                            length++;
+                        }
+                    }
+                    
+                }
+                ShowPDFConfirmationDialog(false, newLine.ToString(), true);
+            }
+            
+        }
         protected async void UploadFiles2(IBrowserFile file)
         {
              string fileContent = "";
@@ -390,7 +553,25 @@ namespace DeviceManager.Pages.Patient
                         }
                         else if (line.StartsWith("MEDICAL DIRECTOR"))
                         {
-                            var attendingPhyscian = line.Substring("MEDICAL DIRECTOR".Length, line.IndexOf(",") - "MEDICAL DIRECTOR".Length);
+                            var otherPhyscian = line.Substring("MEDICAL DIRECTOR".Length, line.IndexOf(",") - "MEDICAL DIRECTOR".Length);
+                            if (!string.IsNullOrEmpty(otherPhyscian))
+                            {
+                                otherPhyscian = otherPhyscian.Trim();
+                            }
+                            patientEntity.OtherPhysicianFullName = otherPhyscian;
+                            if (line.LastIndexOf("NPI") > 0)
+                            {
+                                var otherPhysicanNPI = line.Substring(line.LastIndexOf("NPI:") + ("NPI:").Length, 10);
+                                if (long.TryParse(otherPhysicanNPI, out long otherPhysicanNPIParsed))
+                                {
+                                    patientEntity.OtherPhysicianNPI = otherPhysicanNPIParsed;
+                                }
+
+                            }
+                        }
+                        else if (line.StartsWith("REFERRING/ATTENDING/PATIENT"))
+                        {
+                            var attendingPhyscian = line.Substring("REFERRING/ATTENDING/PATIENT".Length, line.IndexOf(",") - "REFERRING/ATTENDING/PATIENT".Length);
                             if (!string.IsNullOrEmpty(attendingPhyscian))
                             {
                                 attendingPhyscian = attendingPhyscian.Trim();
@@ -401,27 +582,9 @@ namespace DeviceManager.Pages.Patient
                                 var attendingPhysicanNPI = line.Substring(line.LastIndexOf("NPI:") + ("NPI:").Length, 10);
                                 if (long.TryParse(attendingPhysicanNPI, out long attendingPhysicanNPIParsed))
                                 {
-                                    patientEntity.AttendingPhysicianNPI = attendingPhysicanNPIParsed;
-                                }
-
-                            }
-                        }
-                        else if (line.StartsWith("REFERRING/ATTENDING/PATIENT"))
-                        {
-                            var referringPhyscian = line.Substring("REFERRING/ATTENDING/PATIENT".Length, line.IndexOf(",") - "REFERRING/ATTENDING/PATIENT".Length);
-                            if (!string.IsNullOrEmpty(referringPhyscian))
-                            {
-                                referringPhyscian = referringPhyscian.Trim();
-                            }
-                            patientEntity.ReferringPhysicianFullName = referringPhyscian;
-                            if (line.LastIndexOf("NPI") > 0)
-                            {
-                                var referringPhysicanNPI = line.Substring(line.LastIndexOf("NPI:") + ("NPI:").Length, 10);
-                                if (!long.TryParse(referringPhysicanNPI, out long referringPhysicanNPIParsed))
-                                {
-                                    // throw error
-                                }
-                                patientEntity.ReferringPhysicianNPI = referringPhysicanNPIParsed;
+									patientEntity.AttendingPhysicianNPI = attendingPhysicanNPIParsed;
+								}
+                               
                             }
                         }
                         if (!string.IsNullOrEmpty(errorMessage))
@@ -526,7 +689,7 @@ namespace DeviceManager.Pages.Patient
 
         }
 
-        private void ShowPDFConfirmationDialog(bool isError, string message)
+        private void ShowPDFConfirmationDialog(bool isError, string message, bool showCopy = false)
         {
             if (isError)
             {
@@ -535,8 +698,9 @@ namespace DeviceManager.Pages.Patient
                 parameters.Add(x => x.ButtonText, "Ok");
                 parameters.Add(x => x.Color, MudBlazor.Color.Error);
                 parameters.Add(x => x.IsError, true);
+                parameters.Add(x => x.ShowCopy, showCopy);
                 
-                var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall, DisableBackdropClick = true };
+                var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.Large, DisableBackdropClick = true };
 
                 Dialog.Show<PDFConfirmation>("Result", parameters, options);
             }
@@ -547,9 +711,21 @@ namespace DeviceManager.Pages.Patient
                 parameters.Add(x => x.ButtonText, "Ok");
                 parameters.Add(x => x.Color, MudBlazor.Color.Success);
                 parameters.Add(x => x.IsError, false);
-                var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall, DisableBackdropClick = true };
+                parameters.Add(x => x.ShowCopy, showCopy);
+                var options = new DialogOptions();
+                if (showCopy)
+                {
+                     options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.Large, DisableBackdropClick = true };
+					Dialog.Show<PDFConfirmation>("", parameters, options);
+				}
+                else
+                {
+                     options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.Large, DisableBackdropClick = true };
+					Dialog.Show<PDFConfirmation>("Result", parameters, options);
+				}
+                
 
-                Dialog.Show<PDFConfirmation>("Result", parameters, options);
+              
             }
         }
 
@@ -572,5 +748,7 @@ namespace DeviceManager.Pages.Patient
 
             Dialog.Show<PatientDetailsDialog>("Patient Details", parameters, options);
         }
+
+        
     }
 }

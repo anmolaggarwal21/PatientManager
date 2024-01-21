@@ -15,6 +15,7 @@ builder.Services.AddScoped<IProviderRepository, ProviderRepository>();
 builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<IClaimRepository, ClaimRepository>();
 builder.Services.AddSingleton<StateDetails>();
+builder.Services.AddScoped<IClipboardService, ClipboardService>();
 builder.Services.AddDbContext<PatientManagementDbContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddMudServices();
 builder.Services.AddElectron();
