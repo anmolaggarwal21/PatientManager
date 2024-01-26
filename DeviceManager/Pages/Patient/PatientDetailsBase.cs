@@ -6,6 +6,7 @@ using DeviceManager.Repository;
 using DeviceManager.Shared;
 using ElectronNET.API.Entities;
 using Entities;
+using IronXL;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
 using Microsoft.AspNetCore.Components;
@@ -14,8 +15,10 @@ using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using MudBlazor;
 using MudBlazor.Charts;
+using OfficeOpenXml;
 using SocketIOClient.Messages;
 using System.Collections;
+using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -23,6 +26,7 @@ using System.Reflection;
 using System.Reflection.PortableExecutable;
 using System.Security.Cryptography;
 using System.Text;
+using LicenseContext = OfficeOpenXml.LicenseContext;
 
 namespace DeviceManager.Pages.Patient
 {
@@ -107,19 +111,57 @@ namespace DeviceManager.Pages.Patient
 
         protected void GetCobolFormat(PatientEntity patientEntity)
         {
-            
-            string assemblyPath = Assembly.GetExecutingAssembly().Location;
-            string assemblyDirectory = string.Empty;
-            if (!string.IsNullOrEmpty(assemblyPath))
+            string mappingZipCode = "00000";
+			string patientZipCode = "00000";
+			string assemblyPath = Assembly.GetExecutingAssembly().Location;
+			string assemblyDirectory = string.Empty;
+			if (!string.IsNullOrEmpty(assemblyPath))
+			{
+				assemblyDirectory = System.IO.Path.GetDirectoryName(assemblyPath!);
+				Console.WriteLine($"assembly Diectoy inisde if is {assemblyDirectory}");
+			}
+			else
+			{
+				assemblyDirectory = Directory.GetCurrentDirectory();
+				Console.WriteLine($"assembly Diectoy inisde else is {assemblyDirectory}");
+			}
+			if (patientEntity.ZipCode != null && patientEntity.ZipCode != 0 && patientEntity.ZipCode.HasValue)
+			{
+				patientZipCode = patientEntity!.ZipCode!.Value.ToString();
+
+			}
+			try
+			{
+				string excelFile = System.IO.Path.Combine(assemblyDirectory!, "zipSearch.xlsx");
+				FileInfo existingFile = new FileInfo(excelFile);
+				ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                using (ExcelPackage package = new ExcelPackage(existingFile))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets["search"];
+                    worksheet.Cells.SetCellValue(2,2, patientEntity.ZipCode.ToString());
+                    worksheet.Cells[2,2].Value = patientEntity.ZipCode;
+                    
+                    worksheet.Cells[4, 2].Calculate();
+					mappingZipCode = worksheet.Cells[4,2].GetCellValue<string>();
+                    
+					
+				}
+
+				
+				if (string.IsNullOrEmpty(mappingZipCode) || mappingZipCode.Equals("#N/A"))
+				{
+					mappingZipCode = "00000";
+				}
+
+				
+			}
+           catch(Exception ex)
             {
-                 assemblyDirectory = System.IO.Path.GetDirectoryName(assemblyPath);
-                Console.WriteLine($"assembly Diectoy inisde if is {assemblyDirectory}");
-            }
-            else
-            {
-                 assemblyDirectory = Directory.GetCurrentDirectory();
-                Console.WriteLine($"assembly Diectoy inisde else is {assemblyDirectory}");
-            }
+				Console.WriteLine($"Exception while reading excel with error as {ex.Message}");
+			}
+		
+		
+           
             
             string textFile = System.IO.Path.Combine(assemblyDirectory!, "templateFile.txt");
             Console.WriteLine($"TextFile is {textFile}");
@@ -171,7 +213,11 @@ namespace DeviceManager.Pages.Patient
             keyValuePairs.Add("[$PONPI$]", patientEntity!.OtherPhysicianNPI != 0 ? patientEntity!.OtherPhysicianNPI.ToString() : "");
             keyValuePairs.Add("[$POLNAME$]", otherLastName);
             keyValuePairs.Add("[$POFNA$]", otherFirstName);
-
+            keyValuePairs.Add("[$PRONPI]", patientEntity.Provider.NPI == null ? "" : patientEntity.Provider.NPI.ToString());
+            keyValuePairs.Add("[$PAD]", patientEntity.AdmissionDate.GetValueOrDefault().Date.ToString("MMddyy"));
+            keyValuePairs.Add("[$PZ]", patientZipCode);
+            keyValuePairs.Add("[$PAZIPMAP]", $"{patientZipCode}-{mappingZipCode}");
+            keyValuePairs.Add("[$S]", $"EX {patientEntity.Gender.ToString().Substring(0,1)}");
             Dictionary<string, string> replacedNewValue = new Dictionary<string, string>();
             StringBuilder newLine= new StringBuilder();
             

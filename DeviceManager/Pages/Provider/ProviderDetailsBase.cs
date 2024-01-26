@@ -4,6 +4,7 @@ using DeviceManager.Shared;
 using Entities;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using Color = MudBlazor.Color;
 
 namespace DeviceManager.Pages.Provider
 {

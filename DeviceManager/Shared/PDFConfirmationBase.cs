@@ -2,6 +2,7 @@
 using DeviceManager.Repository;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using Color = MudBlazor.Color;
 
 namespace DeviceManager.Shared
 {

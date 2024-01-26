@@ -34,16 +34,15 @@ namespace DeviceManager.Pages.Provider
                .NotEmpty()
                .ExclusiveBetween(10000,99999);
 
-            //RuleFor(x => x.NPI)
-            //   .NotEmpty();
+            RuleFor(x => x.NPI)
+			   .ExclusiveBetween(1000000000, 9999999999);
 
-            //RuleFor(x => x.TaxId)
-            //   .NotEmpty()
-            //   .NotEqual(0);
+			RuleFor(x => x.TaxId)
+			 .ExclusiveBetween(100000000, 9999999999);
 
-            //RuleFor(x => x.ProviderNumber)
-            //   .NotEmpty();
-        }
+            RuleFor(x => x.ProviderNumber)
+               .MaximumLength(6);
+		}
 
         
 

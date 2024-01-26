@@ -1,12 +1,12 @@
 MID 3P80K11ZR05   TOB 81A  S/LOC S B0100 OSCAR                SV:    UB-FORM  
-NPI 881099497  TRANS HOSP PROV                 PROCESS NEW MID                
-AT.CNTL#: X1335-31084          TAX#/SUB:                 TAXO.CD:             
-STMT DATES FROM 081623  TO 000000  DAYS COV      N-C       CO      LTR        
+NPI [$PRONPI]  TRANS HOSP PROV                 PROCESS NEW MID                
+AT.CNTL#: [$PAZIPMAP]          TAX#/SUB:                 TAXO.CD:             
+STMT DATES FROM [$PAD]  TO 000000  DAYS COV      N-C       CO      LTR        
 LAST [$PATIENTLM$]              FIRST [$PATIENTFM$]   MI    DOB [$PATIENTDOB$]      
 ADDR 1 [$PATIENTADDRES$]               2 [$PATIENTCITY$]                               
 3 [$PATIENTSTATE$]                4                                CARR:      
 5                                 6                                 LOC:      
-IP 91335     SEX M MS   ADMIT DATE 081623 HR 00 TYPE 3 SRC 1 D HM      STAT   
+IP [$PZ]     S[$S] MS   ADMIT DATE [$PAD] HR 00 TYPE 3 SRC 1 D HM      STAT   
   COND CODES 01    02    03    04    05    06    07    08    09    10         
 OCC CDS/DATE 01 27 081623 02           03           04           05           
              06           07           08           09           10           
