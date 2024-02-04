@@ -169,37 +169,75 @@ namespace DeviceManager.Pages.Patient
             string attendingLastName = string.Empty;
             string otherFirstName = string.Empty;
             string otherLastName = string.Empty;
-            
-            if (!string.IsNullOrEmpty(patientEntity!.AttendingPhysicianFullName))
+            string patientLastName = string.Empty;
+			string patientFirstName = string.Empty;
+
+			if (!string.IsNullOrEmpty(patientEntity!.AttendingPhysicianFullName))
             {
-                var splitName = patientEntity!.AttendingPhysicianFullName.Split(" ");
-                 attendingFirstName = splitName[0];
-                if(splitName.Length>= 2)
+                var commaSplitAttending = patientEntity!.AttendingPhysicianFullName.Split(",");
+
+                if (commaSplitAttending.Length >= 2)
                 {
-                   attendingLastName = splitName[1];
+					attendingFirstName = commaSplitAttending[1];
+					attendingLastName = commaSplitAttending[0];
+				}
+                else
+                {
+                    var splitName = patientEntity!.AttendingPhysicianFullName.Split(" ");
+					attendingLastName = splitName[0];
+					if (splitName.Length >= 2)
+                    {
+                        
+						attendingFirstName = splitName[1];
+					}
                 }
+                    
 
 
             }
             if (!string.IsNullOrEmpty(patientEntity!.OtherPhysicianFullName))
             {
-                var splitName = patientEntity!.OtherPhysicianFullName.Split(" ");
-                otherFirstName = splitName[0];
-                if (splitName.Length >= 2)
+				var commaSplitOtherPhysician = patientEntity!.OtherPhysicianFullName.Split(",");
+
+                if (commaSplitOtherPhysician.Length >= 2)
                 {
-                    otherLastName = splitName[1];
+					otherFirstName = commaSplitOtherPhysician[1];
+					otherLastName = commaSplitOtherPhysician[0];
+                }
+                else
+                {
+                    var splitName = patientEntity!.OtherPhysicianFullName.Split(" ");
+					otherLastName = splitName[0];
+					if (splitName.Length >= 2)
+                    {
+                        
+						otherFirstName = splitName[1];
+
+					}
+                }
+            }
+
+            if (!string.IsNullOrEmpty(patientEntity.FullName))
+            {
+                var fullNameSplit = patientEntity.FullName.Split(',');
+
+				if (fullNameSplit.Length > 1)
+                {
+					patientLastName = fullNameSplit[0];
+                    patientFirstName = fullNameSplit[1];
 
                 }
-               
-
-
+                else
+                {
+					patientFirstName = fullNameSplit[0];
+				}
             }
             Dictionary<string, string?> keyValuePairs = new Dictionary<string, string?>();
-            keyValuePairs.Add("[$PATIENTLM$]", patientEntity.FullName.Split(',')[0]);
-            keyValuePairs.Add("[$PATIENTFM$]", patientEntity.FullName.Split(',')[1]);
-            keyValuePairs.Add("[$PATIENTDOB$]", patientEntity!.DOB!.GetValueOrDefault().Date.ToString("MMddyyyy"));
-            keyValuePairs.Add("[$PATIENTADDRES$]", patientEntity!.Address ?? "");
-            keyValuePairs.Add("[$PATIENTCITY$]", patientEntity!.City ?? "");
+            keyValuePairs.Add("[$PALM$]", patientLastName);
+            keyValuePairs.Add("[$PAFM$]", patientFirstName);
+            keyValuePairs.Add("[$PDOB$]", patientEntity!.DOB!.GetValueOrDefault().Date.ToString("MMddyyyy"));
+            keyValuePairs.Add("[$DR$]", patientEntity!.Address ?? "");
+            keyValuePairs.Add("[$TY$]", patientEntity!.City ?? "");
             keyValuePairs.Add("[$PATIENTSTATE$]", patientEntity!.state ?? "");
             keyValuePairs.Add("[$PDIG1$]", string.IsNullOrEmpty(patientEntity!.DiagnosisCode1) ? "" : patientEntity!.DiagnosisCode1.Replace(".",""));
             keyValuePairs.Add("[$PDIG2$]", string.IsNullOrEmpty(patientEntity!.DiagnosisCode2) ? "" : patientEntity!.DiagnosisCode2.Replace(".", ""));
@@ -261,6 +299,7 @@ namespace DeviceManager.Pages.Patient
                                
                                 if (value != null  && replacedWord.ToString().Length > value.Length)
                                 {
+
                                      newValue.Append(value);
                                     
                                    
@@ -599,10 +638,16 @@ namespace DeviceManager.Pages.Patient
                         }
                         else if (line.StartsWith("MEDICAL DIRECTOR"))
                         {
-                            var otherPhyscian = line.Substring("MEDICAL DIRECTOR".Length, line.IndexOf(",") - "MEDICAL DIRECTOR".Length);
+                            var otherPhyscian = line.Substring("MEDICAL DIRECTOR".Length, line.IndexOf("Phone") - "MEDICAL DIRECTOR".Length);
+                           
                             if (!string.IsNullOrEmpty(otherPhyscian))
                             {
-                                otherPhyscian = otherPhyscian.Trim();
+								otherPhyscian = otherPhyscian.Trim();
+								if (otherPhyscian.EndsWith(","))
+                                {
+                                    otherPhyscian = otherPhyscian.Substring(0, otherPhyscian.Length - 1);
+                                }
+								otherPhyscian = otherPhyscian.Trim();
                             }
                             patientEntity.OtherPhysicianFullName = otherPhyscian;
                             if (line.LastIndexOf("NPI") > 0)
@@ -617,10 +662,15 @@ namespace DeviceManager.Pages.Patient
                         }
                         else if (line.StartsWith("REFERRING/ATTENDING/PATIENT"))
                         {
-                            var attendingPhyscian = line.Substring("REFERRING/ATTENDING/PATIENT".Length, line.IndexOf(",") - "REFERRING/ATTENDING/PATIENT".Length);
+                            var attendingPhyscian = line.Substring("REFERRING/ATTENDING/PATIENT".Length, line.IndexOf("Phone") - "REFERRING/ATTENDING/PATIENT".Length);
                             if (!string.IsNullOrEmpty(attendingPhyscian))
                             {
-                                attendingPhyscian = attendingPhyscian.Trim();
+								attendingPhyscian = attendingPhyscian.Trim();
+								if (attendingPhyscian.EndsWith(","))
+								{
+									attendingPhyscian = attendingPhyscian.Substring(0, attendingPhyscian.Length - 1);
+								}
+								attendingPhyscian = attendingPhyscian.Trim();
                             }
                             patientEntity.AttendingPhysicianFullName = attendingPhyscian;
                             if (line.LastIndexOf("NPI") > 0)
