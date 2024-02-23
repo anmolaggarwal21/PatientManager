@@ -1,4 +1,7 @@
-﻿@inherits LayoutComponentBase
+﻿@using DeviceManager.Repository;
+@using Entities;
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+@inherits LayoutComponentBase
 
 <MudThemeProvider />
 <MudDialogProvider />
@@ -7,10 +10,25 @@
     <MudAppBar>
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         Patient Claim
+        <MudSpacer/>
+       
+       @*  <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" /> *@
+        <MudMenu Icon="@Icons.Material.Filled.MoreVert">
+            @if (UserLoggedIn)
+            {
+                <MudMenuItem OnClick=OpenProfileDetails>My Profile</MudMenuItem>
+                <MudMenuItem OnClick=logout>Logout</MudMenuItem>
+            }
+          
+        </MudMenu>
     </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen">
-        <NavMenu/>
-    </MudDrawer>
+    @if (UserLoggedIn)
+    {
+        <MudDrawer @bind-Open="@_drawerOpen">
+            <NavMenu />
+        </MudDrawer>
+    }
+    
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.Medium" Class="ml-4" Style="max-width:none">
             @Body
@@ -19,10 +37,114 @@
 </MudLayout>
 @code {
     bool _drawerOpen = true;
+    bool UserLoggedIn = false;
+    [Inject] ProtectedLocalStorage protectedLocalStorage { get; set; }
+    [Inject] NavigationManager navigationManager { get; set; }
+    [Inject] IUserRepository userRepository { get; set; }
+    [Inject]
+    protected IDialogService Dialog { get; set; }
+    protected override async  Task OnInitializedAsync()
+    {
+        try
+        {
+            var localStorageValue = await protectedLocalStorage.GetAsync<bool?>("UserLoggedIn");
+            if (localStorageValue.Success)
+            {
+                UserLoggedIn = true;
+                var loggedInUserLocalStorage = await protectedLocalStorage.GetAsync<Users>("UserDetails");
+                if (loggedInUserLocalStorage.Success && loggedInUserLocalStorage.Value != null)
+                {
+                    var loggedInUser = await userRepository.GetUserById(loggedInUserLocalStorage.Value.Id);
+                    if(loggedInUser == null)
+                    {
+                        navigationManager.NavigateTo("/Login");
+                        UserLoggedIn = false;
+                    }
 
+                }
+            }
+            else
+            {
+                UserLoggedIn = false;
+                navigationManager.NavigateTo("/Login");
+            }
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+        base.OnInitializedAsync();
+    }
+
+    // protected override async Task OnAfterRenderAsync(bool firstRender)
+    // {
+    //     try
+    //     {
+    //         var localStorageValue = await protectedLocalStorage.GetAsync<bool?>("UserLoggedIn");
+    //         if (localStorageValue.Success)
+    //         {
+               
+    //             var loggedInUserLocalStorage = await protectedLocalStorage.GetAsync<Users>("UserDetails");
+    //             if (loggedInUserLocalStorage.Success && loggedInUserLocalStorage.Value != null)
+    //             {
+    //                 var loggedInUser = await userRepository.GetUserById(loggedInUserLocalStorage.Value.Id);
+    //                 if (loggedInUser == null)
+    //                 {
+    //                     navigationManager.NavigateTo("/Login");
+    //                     UserLoggedIn = false;
+    //                 }
+
+    //             }
+    //         }
+    //         else
+    //         {
+    //             UserLoggedIn = false;
+    //             navigationManager.NavigateTo("/Login");
+    //         }
+    //     }
+    //     catch (Exception ex)
+    //     {
+
+    //     }
+    //      base.OnAfterRenderAsync(firstRender);
+    // }
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
+    }
+
+    protected async Task logout()
+    {
+        navigationManager.NavigateTo("/Login");
+        await protectedLocalStorage.DeleteAsync("UserLoggedIn");
+        await protectedLocalStorage.DeleteAsync("UserDetails");
+        await protectedLocalStorage.DeleteAsync("UserRole");
+
+        _drawerOpen = false;
+        UserLoggedIn = false;
+
+    }
+
+    protected async void OpenProfileDetails()
+    {
+        var localStorageValue = await protectedLocalStorage.GetAsync<bool?>("UserLoggedIn");
+        if (localStorageValue.Success)
+        {
+            var loggedInUserLocalStorage = await protectedLocalStorage.GetAsync<Users>("UserDetails");
+            
+            var roleName = await protectedLocalStorage.GetAsync<string>("UserRole");
+            if (loggedInUserLocalStorage.Success && loggedInUserLocalStorage.Value != null)
+            {
+                var parameters = new DialogParameters<UserDetailsDialog>();
+                parameters.Add(x => x.UsersEntity, loggedInUserLocalStorage.Value);
+                parameters.Add(x => x.RoleName, roleName.Value);
+                var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.Medium, DisableBackdropClick = true, FullWidth = true };
+
+                Dialog.Show<UserDetailsDialog>("Profile Details", parameters, options);
+
+            }
+        }
     }
 }
 @* <PageTitle>DeviceManager</PageTitle>

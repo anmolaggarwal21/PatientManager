@@ -1,0 +1,63 @@
+﻿@page "/user"
+
+
+@using DeviceManager.Pages.User;
+@using Entities;
+@using Entities.UserManagement.Models;
+
+@inherits UserDetailBase
+
+@if (showUser)
+{
+    
+
+@if (!pageLoaded)
+{
+    <MudProgressLinear Color="Color.Default" Indeterminate="true" />
+}
+else
+{
+
+    <div class="mt-4">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/AddUser">Add</MudButton>
+    <MudDivider />
+    </div>
+    <div class="mt-4">
+        <MudTable Items="@UsersDto" Dense=true Hover=true Bordered=true Striped=false MultiSelection="false" Filter="new Func<DisplayUser,bool>(FilterFunc1)"
+        @bind-SelectedItem="selectedItem1"  @ref="mudTable">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Users</MudText>
+            <MudSpacer />
+                <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Username</MudTh>
+            <MudTh>Role</MudTh>
+            <MudTh>First Name</MudTh>
+            <MudTh>Last Name</MudTh>
+            <MudTh>Gender</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+                <MudTd DataLabel="Username">@context.UserName</MudTd>
+                <MudTd DataLabel="Role">@context.RoleName</MudTd>
+             <MudTd DataLabel="First Name">@context.FirstName</MudTd>
+                <MudTd DataLabel="Last Name" >@context.LastName</MudTd>
+            <MudTd DataLabel="Gender">@context.Gender</MudTd>
+    
+                <MudTd>
+                    <MudMenu Icon="@Icons.Material.Filled.MoreVert">
+                        <MudMenuItem IconSize="Size.Small" IconColor="Color.Primary" Icon="@Icons.Material.Filled.Edit" OnClick="@( () => OnEditClick(context.Id))">Edit</MudMenuItem>
+                    
+                        <MudMenuItem IconSize="Size.Small" IconColor="Color.Secondary" Icon="@Icons.Material.Filled.Delete" OnClick="@( () => OnDeleteClick(context.Id))">Delete</MudMenuItem>
+                        
+                    </MudMenu>
+                </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+    </div>
+}
+}
+

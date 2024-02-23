@@ -1,0 +1,20 @@
+﻿@inherits UserDetailsDialogBase
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Info" Class="mr-3 mb-n1" />
+            Profile
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <div class="d-flex flex-column py-1">
+            <MudTextField Value=@UsersEntity?.UserName Label="User Name" ReadOnly="true" />
+            <MudTextField Value=@UsersEntity?.FirstName Label="First Name" ReadOnly="true" />
+            <MudTextField Value=@UsersEntity?.LastName Label="Last Name" ReadOnly="true" />
+            <MudTextField Value=@RoleName Label="Role" ReadOnly="true" />
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Close</MudButton>
+    </DialogActions>
+</MudDialog>

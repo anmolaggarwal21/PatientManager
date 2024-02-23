@@ -23,6 +23,7 @@ namespace DeviceManager.Shared
         [Inject] IProviderRepository providerRepository { get; set; }
 		[Inject] IPatientRepository patientRepository { get; set; }
 		[Inject] IClaimRepository claimRepository { get; set; }
+		[Inject] IUserRepository userRepository { get; set; }
 		[Inject]
         NavigationManager navigationManager { get; set; }
         protected async Task Submit()
@@ -53,6 +54,10 @@ namespace DeviceManager.Shared
 						navigationManager.NavigateTo("/claim", true);
 					}
 
+					break;
+					case EntityTypeEnum.User:
+					await userRepository.DeleteUser(Id);
+					navigationManager.NavigateTo("/user", true);
 					break;
 
 			}

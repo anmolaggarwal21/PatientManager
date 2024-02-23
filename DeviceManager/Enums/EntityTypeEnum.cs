@@ -4,6 +4,7 @@
 	{
 		Provider,
 		Claim,
-		Patient
+		Patient,
+		User
 	}
 }

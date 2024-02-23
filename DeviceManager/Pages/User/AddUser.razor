@@ -1,0 +1,75 @@
+﻿@page "/AddUser"
+@using Entities;
+@using Microsoft.AspNetCore.Identity;
+@inherits AddUserDetailsBase
+
+
+@if (showUser)
+{
+	<h3>Add User</h3>
+
+
+	<MudCard>
+		<MudForm Model="@model" @ref="@form" Validation="@(registeredDtoValidator.ValidateValue)" ValidationDelay="0">
+			<MudCardContent>
+				<MudTextField @bind-Value="model.FirstName"
+				For="@(() => model.FirstName)"
+				Immediate="true"
+				Label="First Name" />
+
+				<MudTextField @bind-Value="model.LastName"
+				For="@(() => model.LastName)"
+				Immediate="true"
+				Label="last Name"  />
+
+				<MudTextField @bind-Value="model.UserName"
+				For="@(() => model.UserName)"
+				Immediate="true"
+				Label="User Name" />
+
+				<MudTextField @bind-Value="model.Password"
+				For="@(() => model.Password)"
+				Immediate="true"
+				Label="Password" Variant="Variant.Text" 
+				InputType="@PasswordInput" Adornment="Adornment.End"
+				AdornmentIcon="@PasswordInputIcon"
+				OnAdornmentClick="ButtonTestclick" 
+				AdornmentAriaLabel="Show Password" />
+
+				<MudTextField @bind-Value="model.ReEnterPassword"
+				For="@(() => model.ReEnterPassword)"
+				Immediate="true"
+				Label="Re-Enter Password" Variant="Variant.Text"
+				InputType="@PasswordInput1" Adornment="Adornment.End"
+				AdornmentIcon="@PasswordInputIcon1"
+				OnAdornmentClick="ButtonTestclick1"
+				AdornmentAriaLabel="Show Password" />
+
+				<MudSelect T="GenderEnum" Label="Gender" AnchorOrigin="Origin.BottomCenter" @bind-Value="model.Gender">
+					@foreach (var value in genderTypes)
+					{
+						<MudSelectItem T="GenderEnum" Value="@value">
+							@value.ToString()
+						</MudSelectItem>
+					}
+				</MudSelect>
+
+				<MudSelect T="IdentityRole" Label="Role" AnchorOrigin="Origin.BottomCenter" @bind-Value="model.Role" For="@(() => model.Role)">
+					@foreach (var value in roles)
+					{
+						<MudSelectItem T="IdentityRole" Value="@value">
+							@value.Name
+						</MudSelectItem>
+					}
+				</MudSelect>
+
+			</MudCardContent>
+
+		</MudForm>
+		<MudCardActions>
+
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(async () => await Submit())" Class="mr-4">Create</MudButton>
+			<MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@Cancel">Cancel</MudButton>
+		</MudCardActions>
+	</MudCard>
+}

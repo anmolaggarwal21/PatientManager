@@ -31,6 +31,6 @@ IDE                    GAF                     PRV
 PROCEDURE CODES AND DATES 01                02                            
 03                04                05                06                  
 ESRD HRS     ADJ REAS CD     REJ CD        NONPAY CD     ATT TAXO         
-ATT PHYS        NPI [$PANPI$]     L [$PALNAME$]        F [$PAFNA$] M    SC
-OPR PHYS        NPI               L                    F           M    SC
-OTH OPR         NPI [$PONPI$]     L [$POLNAME$]        F [$POFNA$] M    SC
+ATT PHYS        NPI [$PANPI$]     F [$PAFNA$]          L [$PALNA$] M    SC
+OPR PHYS        NPI               F                    L           M    SC
+OTH OPR         NPI [$PONPI$]     F [$POFNA$]          L [$POLNA$] M    SC

@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using MudBlazor;
 using MudBlazor.Charts;
+using MudBlazor.Extensions;
+using MudBlazor.Extensions.Options;
 using OfficeOpenXml;
 using SocketIOClient.Messages;
 using System.Collections;
@@ -178,7 +180,7 @@ namespace DeviceManager.Pages.Patient
 
                 if (commaSplitAttending.Length >= 2)
                 {
-					attendingFirstName = commaSplitAttending[1];
+					attendingFirstName = commaSplitAttending[1].Split(" ")[0]; 
 					attendingLastName = commaSplitAttending[0];
 				}
                 else
@@ -188,7 +190,7 @@ namespace DeviceManager.Pages.Patient
 					if (splitName.Length >= 2)
                     {
                         
-						attendingFirstName = splitName[1];
+						attendingFirstName = splitName[1].Split(" ")[0];
 					}
                 }
                     
@@ -201,7 +203,7 @@ namespace DeviceManager.Pages.Patient
 
                 if (commaSplitOtherPhysician.Length >= 2)
                 {
-					otherFirstName = commaSplitOtherPhysician[1];
+					otherFirstName = commaSplitOtherPhysician[1].Split(" ")[0]; 
 					otherLastName = commaSplitOtherPhysician[0];
                 }
                 else
@@ -210,8 +212,8 @@ namespace DeviceManager.Pages.Patient
 					otherLastName = splitName[0];
 					if (splitName.Length >= 2)
                     {
-                        
-						otherFirstName = splitName[1];
+
+                        otherFirstName = splitName[1].Split(" ")[0];
 
 					}
                 }
@@ -246,10 +248,10 @@ namespace DeviceManager.Pages.Patient
             keyValuePairs.Add("[$PDIG5$]", string.IsNullOrEmpty(patientEntity!.DiagnosisCode5) ? "" : patientEntity!.DiagnosisCode5.Replace(".", ""));
             keyValuePairs.Add("[$PDIG6$]", string.IsNullOrEmpty(patientEntity!.DiagnosisCode6) ? "" : patientEntity!.DiagnosisCode6.Replace(".", ""));
             keyValuePairs.Add("[$PANPI$]", patientEntity!.AttendingPhysicianNPI != 0 ? patientEntity!.AttendingPhysicianNPI.ToString(): "");
-            keyValuePairs.Add("[$PALNAME$]", attendingLastName);
+            keyValuePairs.Add("[$PALNA$]", attendingLastName);
             keyValuePairs.Add("[$PAFNA$]", attendingFirstName );
             keyValuePairs.Add("[$PONPI$]", patientEntity!.OtherPhysicianNPI != 0 ? patientEntity!.OtherPhysicianNPI.ToString() : "");
-            keyValuePairs.Add("[$POLNAME$]", otherLastName);
+            keyValuePairs.Add("[$POLNA$]", otherLastName);
             keyValuePairs.Add("[$POFNA$]", otherFirstName);
             keyValuePairs.Add("[$PRONPI]", patientEntity.Provider.NPI == null ? "" : patientEntity.Provider.NPI.ToString());
             keyValuePairs.Add("[$PAD]", patientEntity.AdmissionDate.GetValueOrDefault().Date.ToString("MMddyy"));
@@ -742,6 +744,7 @@ namespace DeviceManager.Pages.Patient
                     parameters.Add(x => x.ContentText, $"Patient Details added : {patientEntity.FullName}");
                     parameters.Add(x => x.ButtonText, "Ok");
                     parameters.Add(x => x.Color, MudBlazor.Color.Success);
+                    parameters.Add(x => x.IsUser,false);
 
                     var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall, DisableBackdropClick = true };
 
@@ -795,7 +798,8 @@ namespace DeviceManager.Pages.Patient
                 parameters.Add(x => x.Color, MudBlazor.Color.Error);
                 parameters.Add(x => x.IsError, true);
                 parameters.Add(x => x.ShowCopy, showCopy);
-                
+                parameters.Add(x => x.IsUser, false);
+
                 var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.Large, DisableBackdropClick = true };
 
                 Dialog.Show<PDFConfirmation>("Result", parameters, options);
@@ -808,15 +812,16 @@ namespace DeviceManager.Pages.Patient
                 parameters.Add(x => x.Color, MudBlazor.Color.Success);
                 parameters.Add(x => x.IsError, false);
                 parameters.Add(x => x.ShowCopy, showCopy);
-                var options = new DialogOptions();
+                parameters.Add(x => x.IsUser, false);
+                var options = new DialogOptionsEx();
                 if (showCopy)
                 {
-                     options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.Large, DisableBackdropClick = true };
-					Dialog.Show<PDFConfirmation>("", parameters, options);
+                     options = new DialogOptionsEx() { Resizeable = true, DragMode = MudDialogDragMode.Simple, CloseButton = true, MaxWidth = MaxWidth.Large, DisableBackdropClick = true };
+					Dialog.ShowEx<PDFConfirmation>("", parameters, options);
 				}
                 else
                 {
-                     options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.Large, DisableBackdropClick = true };
+                     options = new DialogOptionsEx() { CloseButton = true, MaxWidth = MaxWidth.Large, DisableBackdropClick = true };
 					Dialog.Show<PDFConfirmation>("Result", parameters, options);
 				}
                 

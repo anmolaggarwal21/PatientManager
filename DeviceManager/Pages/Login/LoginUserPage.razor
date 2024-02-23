@@ -1,0 +1,41 @@
+﻿@page "/Login"
+@page "/"
+@using Entities;
+@using Microsoft.AspNetCore.Identity;
+@inherits LoginUserBase
+<h3>Login</h3>
+@if (!pageLoaded)
+{
+    <MudProgressLinear Color="Color.Default" Indeterminate="true" />
+}
+else
+{
+<MudCard>
+		<MudTextField @bind-Value="ErrorMessage" Label="" Variant="Variant.Text" Disabled="true" Error=isError />	<MudForm Model="@model" @ref="@form" Validation="@(loginUserFluentValidator.ValidateValue)" ValidationDelay="0">
+		<MudCardContent>
+			<MudTextField @bind-Value="model.Username"
+						  For="@(() => model.Username)"
+						  Immediate="true"
+						  Label="Username" />
+
+			<MudTextField @bind-Value="model.Password"
+						  For="@(() => model.Password)"
+						  Immediate="true"
+						  Label="Password" Variant="Variant.Text" 
+						  InputType="@PasswordInput" Adornment="Adornment.End"
+						  AdornmentIcon="@PasswordInputIcon"
+						  OnAdornmentClick="ButtonTestclick" 
+						  AdornmentAriaLabel="Show Password" />
+
+			
+
+		</MudCardContent>
+		
+	</MudForm>
+	<MudCardActions>
+		
+		<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(async () => await Submit())" Class="mr-4">Login</MudButton>
+		
+	</MudCardActions>
+</MudCard>
+}

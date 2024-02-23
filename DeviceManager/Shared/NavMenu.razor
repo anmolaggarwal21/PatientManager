@@ -1,12 +1,22 @@
-﻿<MudNavMenu>
+﻿@using DeviceManager.Repository;
+@using Entities;
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+<MudNavMenu>
     <MudText Typo="Typo.h4" Class="px-4">Application</MudText>
     <MudDivider></MudDivider>
-    <MudNavLink Href="/" Match="NavLinkMatch.Prefix">Dashboard</MudNavLink>
+    <MudNavLink Href="/dashboard" Match="NavLinkMatch.Prefix">Dashboard</MudNavLink>
+    @if (showUser)
+    {
+        <MudNavLink Href="/User" Match="NavLinkMatch.Prefix">User</MudNavLink>
+    }
+    
     <MudNavLink Href="/Provider" Match="NavLinkMatch.Prefix">Provider</MudNavLink>
     <MudNavLink Href="/patient" Match="NavLinkMatch.Prefix">Patient</MudNavLink>
     <MudNavLink Href="/claim" Match="NavLinkMatch.Prefix">Claim</MudNavLink>
     
 </MudNavMenu>
+
+
 
 @* <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
@@ -42,14 +52,25 @@
     </nav>
 </div>
 
+
+ *@
+
 @code {
-    private bool collapseNavMenu = true;
-
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
+    protected string roles { get; set; }
+    protected bool showUser { get; set; } = false;
+    [Inject] ProtectedLocalStorage protectedLocalStorage { get; set; }
+    protected override async Task OnInitializedAsync()
     {
-        collapseNavMenu = !collapseNavMenu;
+        var roleName = await protectedLocalStorage.GetAsync<string?>("UserRole");
+        if (roleName.Success && !string.IsNullOrEmpty(roleName.Value) && roleName.Value.Equals("Admin"))
+        {
+            showUser = true;
+        }
+        else
+        {
+            showUser = false;
+        }
+
+        base.OnInitializedAsync();
     }
 }
- *@
