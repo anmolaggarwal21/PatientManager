@@ -22,6 +22,16 @@ namespace DeviceManager
 			builder.Entity<PatientEntity>().
 				Property(p => p.AdmissionDate)
 				.HasColumnType("date");
+
+			builder.Entity<ClaimEntity>().
+				HasOne(x=> x.Patient)
+				.WithMany()
+				.OnDelete(DeleteBehavior.Restrict);
+
+			builder.Entity<ClaimEntity>().
+			HasOne(x => x.Provider)
+			.WithMany()
+			.OnDelete(DeleteBehavior.Restrict);
 		}
 	}
 }

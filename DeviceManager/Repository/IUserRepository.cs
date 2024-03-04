@@ -18,7 +18,7 @@ namespace DeviceManager.Repository
 		Task<List<IdentityRole>> GetRoles();
 		Task<string> GetRoleOfUser(Users user);
 		Task<UserResponseDto> AuthenticateUser(LoginUserDto loginUserDto);
-		Task<bool> UpdateUser(Users user, string newPassword);
+		Task<bool> UpdateUserPassword(Users user, string newPassword, bool isPasswordResetByAdmin = true);
 
     }
 }

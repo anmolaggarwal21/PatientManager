@@ -1,6 +1,5 @@
 ﻿
 using DeviceManager.Enums;
-using DeviceManager.Migrations;
 using DeviceManager.Pages.Provider;
 using DeviceManager.Repository;
 using DeviceManager.Shared;
@@ -824,9 +823,6 @@ namespace DeviceManager.Pages.Patient
                      options = new DialogOptionsEx() { CloseButton = true, MaxWidth = MaxWidth.Large, DisableBackdropClick = true };
 					Dialog.Show<PDFConfirmation>("Result", parameters, options);
 				}
-                
-
-              
             }
         }
 

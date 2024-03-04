@@ -68,6 +68,7 @@ namespace DeviceManager.Pages.User
 
 
                 UsersDto = new List<DisplayUser>();
+               
                 var allUser = await userRepository.GetAllUser();
                 if (allUser != null)
                 {

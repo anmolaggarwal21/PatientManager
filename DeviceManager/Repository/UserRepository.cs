@@ -4,6 +4,7 @@ using Entities.UserManagement.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Security;
 using System.Security.Policy;
 
 namespace DeviceManager.Repository
@@ -12,12 +13,15 @@ namespace DeviceManager.Repository
 	{
 		private readonly UserManager<Users> _userManager;
 		private readonly RoleManager<IdentityRole> _roleManager;
+		private readonly IConfiguration _configuration;
 
 		public UserRepository(UserManager<Users> userManager,
-			RoleManager<IdentityRole> roleManager)
+			RoleManager<IdentityRole> roleManager,
+			IConfiguration configuration)
 		{
 			_userManager = userManager;
 			_roleManager = roleManager;
+			_configuration = configuration;
 		}
 		public async Task<UserResponseDto> AddUser(RegisteredUserDto userEntity)
 		{
@@ -38,7 +42,7 @@ namespace DeviceManager.Repository
 				UserName = userEntity.UserName,
 				Gender = userEntity.Gender.ToString(),
 				LockoutEnabled = false
-				
+
 			};
 			var response = await _userManager.CreateAsync(userToBeCreated, userEntity.Password);
 
@@ -86,7 +90,14 @@ namespace DeviceManager.Repository
 
 		public async Task<List<Users>> GetAllUser()
 		{
-			return await _userManager.Users.ToListAsync();
+			try
+			{
+				return await _userManager.Users.ToListAsync();
+			}
+			catch(Exception ex)
+			{
+				return null;
+			}
 			
 		}
 
@@ -184,12 +195,30 @@ namespace DeviceManager.Repository
 
 		}
 
-		public async Task<bool> UpdateUser(Users user, string newPassword)
+		public async Task<bool> UpdateUserPassword(Users user, string newPassword, bool isPasswordResetByAdmin = true)
 		{
-            
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-			var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
-			return result.Succeeded;
+			//if (isPasswordResetByAdmin)
+			//{
+
+			//	user.ConcurrencyStamp = _configuration.GetValue<string>("ConcurrencyStamp");
+			//}
+			//else
+			//{
+			//	user.ConcurrencyStamp = Guid.NewGuid().ToString();
+			//}
+			//var isSecurityStampUpdated = await _userManager.UpdateAsync(user);
+			//if (isSecurityStampUpdated.Succeeded)
+			{
+				var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+				var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+				return result.Succeeded;
+
+			}
+			
+			return false;
+			
+
+		
 		}
 	}
 }

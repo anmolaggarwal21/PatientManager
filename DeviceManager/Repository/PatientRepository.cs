@@ -35,9 +35,19 @@ namespace DeviceManager.Repository
         public async Task<bool> DeletePatient(Guid id)
         {
             var patient = await _patientManagementDbContext.PatientEntities.FindAsync(id);
-            if (patient != null)
+
+			if (patient != null)
             {
-                _patientManagementDbContext.PatientEntities.Remove(patient);
+				
+
+				var claims = _patientManagementDbContext.ClaimEntities.Where(x => x.Patient == patient).ToList();
+                if( claims != null )
+                {
+                    _patientManagementDbContext.ClaimEntities.RemoveRange(claims);
+
+				}
+
+				_patientManagementDbContext.PatientEntities.Remove(patient);
                 await _patientManagementDbContext.SaveChangesAsync();
                 return true;
             }

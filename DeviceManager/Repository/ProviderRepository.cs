@@ -37,7 +37,14 @@ namespace DeviceManager.Repository
             var provider = await _patientManagementDbContext.ProviderEntities.FindAsync(id);
             if (provider != null)
             {
-                _patientManagementDbContext.ProviderEntities.Remove(provider);
+				var claims = _patientManagementDbContext.ClaimEntities.Where(x => x.Provider == provider).ToList();
+				if (claims != null)
+				{
+					_patientManagementDbContext.ClaimEntities.RemoveRange(claims);
+
+				}
+
+				_patientManagementDbContext.ProviderEntities.Remove(provider);
                 await _patientManagementDbContext.SaveChangesAsync();
                 return true;
             }

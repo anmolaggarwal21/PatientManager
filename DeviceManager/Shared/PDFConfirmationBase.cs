@@ -34,7 +34,7 @@ namespace DeviceManager.Shared
             }
             if (IsUser)
             {
-                navigationManager.NavigateTo("/user", true);
+                navigationManager.NavigateTo("/user");
             }
 
             MudDialog.Close(DialogResult.Ok(true));

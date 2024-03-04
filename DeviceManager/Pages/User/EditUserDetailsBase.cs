@@ -175,7 +175,7 @@ namespace DeviceManager.Pages.User
 			if(userToBeEdited !=  null)
             {
                 var usernameCasing = userToBeEdited.UserName.Substring(0, 1).ToUpper() + userToBeEdited.UserName.Substring(1);
-                if(await userRepository.UpdateUser(userToBeEdited, $"{usernameCasing}1234567!"))
+                if(await userRepository.UpdateUserPassword(userToBeEdited, $"{usernameCasing}1234567!", true))
 				{
 					ShowErrorDialog($"Password Reset with password as {usernameCasing}1234567!", IsError: false,Header: "Success" );
 

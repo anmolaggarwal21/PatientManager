@@ -9,17 +9,19 @@ namespace DeviceManager
 {
 	public partial class UserDBContext : IdentityDbContext<Users>
     {
+		private readonly IConfiguration _configuration;
       
       
-        public UserDBContext(DbContextOptions<UserDBContext> options)
+        public UserDBContext(DbContextOptions<UserDBContext> options, IConfiguration configuration)
             : base(options)
         {
+			_configuration = configuration;
         }
 
        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-			string ADMIN_ID = "02174cf0–9412–4cfe-afbf-59f706d72cf6";
+			
 			string Admin_ROLE_ID =  "341743f0-asd2–42de-afbf-59kmkkmk72cd6";
 			string Member_Role_id = "fbf6c1fa-d357-4a9a-ab52-eb0fc3ad7258";
 
@@ -48,8 +50,11 @@ namespace DeviceManager
                 UserName ="SuperUser",
                 Gender = "Male",
 				NormalizedUserName = "SUPERUSER",
-				Id = "8e445865-a24d-4543-a6c6-9443d048cdc9"
-			};
+				Id = "8e445865-a24d-4543-a6c6-9443d048cdc9",
+				SecurityStamp = _configuration.GetValue<string>("ConcurrencyStamp")
+				
+
+            };
 
 			//set user password
 			PasswordHasher<Users> ph = new PasswordHasher<Users>();
@@ -57,8 +62,6 @@ namespace DeviceManager
 
 			//seed user
 			modelBuilder.Entity<Users>().HasData(appUser);
-
-
 			
 			//set user role to admin
 			modelBuilder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>

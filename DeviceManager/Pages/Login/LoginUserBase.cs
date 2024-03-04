@@ -1,10 +1,12 @@
-﻿using DeviceManager.Repository;
+﻿using DeviceManager.Pages.User;
+using DeviceManager.Repository;
 using Entities;
 using Entities.UserManagement.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Identity;
 using MudBlazor;
+using Nextended.Core.Extensions;
 
 namespace DeviceManager.Pages.Login
 {
@@ -20,6 +22,8 @@ namespace DeviceManager.Pages.Login
         [Inject] IUserRepository userRepository { get; set; }
         [Inject] ProtectedLocalStorage protectedLocalStorage { get; set; }
 
+        [Inject] IConfiguration configuration { get; set; }
+
 		bool isShow, isShow1;
 		public InputType PasswordInput = InputType.Password;
 		public string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
@@ -28,6 +32,11 @@ namespace DeviceManager.Pages.Login
 		public string PasswordInputIcon1 = Icons.Material.Filled.VisibilityOff;
         protected bool pageLoaded { get; set; } = false;
         protected bool isError { get; set; } = false;
+
+        protected string UserId { get; set; }
+
+
+		protected bool IsResetPassword { get; set; } = false;
         protected void ButtonTestclick()
         {
             if (isShow)
@@ -55,7 +64,9 @@ namespace DeviceManager.Pages.Login
 			isError = false;
 			loginUserFluentValidator = new LoginUserFluentValidator();
             pageLoaded = true;
-            try
+            IsResetPassword = false;
+
+			try
             {
                var isUserLoggedIn =  await protectedLocalStorage.GetAsync<bool>("UserLoggedIn");
                 if (isUserLoggedIn.Success && isUserLoggedIn.Value)
@@ -80,14 +91,26 @@ namespace DeviceManager.Pages.Login
                 if(result.Status && result.User != null)
 				{
                     ErrorMessage = string.Empty;
-                    var role = await userRepository.GetRoleOfUser(result.User);
-                    await protectedLocalStorage.SetAsync("UserLoggedIn", true);
-                    await protectedLocalStorage.SetAsync("UserDetails", result.User);
-					await protectedLocalStorage.SetAsync("UserRole", role);
+                    if (result.User.SecurityStamp.Equals(configuration.GetValue<string>("ConcurrencyStamp")))
+                    {
+						UserId = result.User.Id;
+                        IsResetPassword = true;
 
-					await Task.Delay(1000);
-                    navigationManager.NavigateTo("/dashboard", forceLoad: true);
-                    Snackbar.Add("Login Successful");
+					}
+                    else
+                    {
+                        IsResetPassword = false;
+						var role = await userRepository.GetRoleOfUser(result.User);
+                        await protectedLocalStorage.SetAsync("UserLoggedIn", true);
+                        await protectedLocalStorage.SetAsync("UserDetails", result.User);
+                        await protectedLocalStorage.SetAsync("UserRole", role);
+
+                        await Task.Delay(1000);
+                        navigationManager.NavigateTo("/dashboard", forceLoad: true);
+                        Snackbar.Add("Login Successful");
+                    }
+                
+                   
 
                 }
                 else
