@@ -64,6 +64,7 @@
 
   <ItemGroup>
     <Folder Include="Pages\Console\" />
+    <Folder Include="Pages\Billing\" />
   </ItemGroup>
 
 </Project>
