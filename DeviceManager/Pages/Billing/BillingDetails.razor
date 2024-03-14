@@ -1,0 +1,90 @@
+﻿@page "/billing"
+
+@using Entities;
+
+@inherits BillingDetailsBase
+@if (!pageLoaded)
+{
+    <MudProgressLinear Color="Color.Default" Indeterminate="true" />
+}
+else
+{
+
+    <div class="mt-4">
+        <MudFileUpload T="IBrowserFile" Accept=".xlsx" FilesChanged="UploadFiles2" MaximumFileCount="100">
+            <ButtonTemplate>
+                <MudButton HtmlTag="label"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.CloudUpload"
+                           for="@context.Id">
+                    Upload excel files
+                </MudButton>
+            </ButtonTemplate>
+        </MudFileUpload>
+    <MudDivider />
+    </div>
+    <div class="mt-4">
+        <MudTable Items="@BillingEntityDto" Dense=true Hover=true Bordered=true Striped=false MultiSelection="false" Filter="new Func<BillingEntityDto,bool>(FilterFunc1)"
+        @bind-SelectedItem="selectedItem1"  @ref="mudTable">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Billing</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Details</MudTh>
+            <MudTh>Patient Name</MudTh>
+            <MudTh>Admission Date</MudTh>
+            <MudTh>Patient Found</MudTh>
+            <MudTh>Actions</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+
+                <MudTd><MudIconButton IconSize="Size.Small" IconColor="Color.Primary" Icon= "@(context.ShowDetails ? Icons.Material.Filled.ArrowCircleUp :  Icons.Material.Filled.ArrowCircleRight)" OnClick="@( () => OnShowDetails(context.BillingId))"></MudIconButton></MudTd>
+                <MudTd DataLabel="Patient Name">@context.PatientName</MudTd>
+                <MudTd DataLabel="Admission Date">@context.AdmissionDate</MudTd>
+                <MudTd DataLabel="Patient Found">@context.FoundPatient</MudTd>
+                <MudTd>
+                    <MudMenu Icon="@Icons.Material.Filled.MoreVert">
+                        <MudMenuItem IconSize="Size.Small" IconColor="Color.Primary" Icon="@Icons.Material.Filled.Edit" OnClick="@( () => OnEditClick(context.BillingId))">Edit</MudMenuItem>
+
+                        <MudMenuItem IconSize="Size.Small" IconColor="Color.Secondary" Icon="@Icons.Material.Filled.Delete" OnClick="@( () => OnDeleteClick(context.BillingId))">Delete</MudMenuItem>
+                        
+                    </MudMenu>
+                </MudTd>
+        </RowTemplate>
+        <ChildRowContent>
+            <MudTr>
+                <td colspan="6">
+                 @if (context.ShowDetails)
+                {
+                    <MudTable Items="@context.TypeDetails" Context="TypeDetailsContext" Hover="true" Breakpoint="Breakpoint.Sm" Elevation="0">
+                       
+                        <HeaderContent>
+                            <MudTh>Type</MudTh>
+                            <MudTh>AdmissionDate</MudTh>
+                            <MudTh>Start No Of Days</MudTh>
+                            <MudTh>End No Of Days</MudTh>
+                            <MudTh>Amount</MudTh>
+                            <MudTh>Code</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Type">@TypeDetailsContext.Type</MudTd>
+                            <MudTd DataLabel="AdmissionDate">@TypeDetailsContext.AdmissionDate</MudTd>
+                            <MudTd DataLabel="Start No Of Days">@TypeDetailsContext.NoOfDays1</MudTd>
+                            <MudTd DataLabel="End No Of Days">@TypeDetailsContext.NoOfDays2</MudTd>
+                            <MudTd DataLabel="Amount">@TypeDetailsContext.Amount</MudTd>
+                            <MudTd DataLabel="Code">@TypeDetailsContext.Code</MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                }
+               </td>
+            </MudTr>
+        </ChildRowContent>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+    </div>
+}

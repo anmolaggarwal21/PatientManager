@@ -352,7 +352,6 @@ namespace DeviceManager.Pages.Patient
         protected async void UploadFiles2(IBrowserFile file)
         {
              string fileContent = "";
-             files.Add(file);
 
             long maxsize = 512000;
 

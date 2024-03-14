@@ -17,6 +17,7 @@ builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddScoped<IProviderRepository, ProviderRepository>();
 builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<IClaimRepository, ClaimRepository>();
+builder.Services.AddScoped<IBillingRepository, BillingRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddSingleton<StateDetails>();
 builder.Services.AddScoped<IClipboardService, ClipboardService>();

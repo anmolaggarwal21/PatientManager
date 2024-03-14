@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Identity;
 using MudBlazor;
 using Nextended.Core.Extensions;
+using System.Linq.Expressions;
 
 namespace DeviceManager.Pages.Login
 {
@@ -87,20 +88,24 @@ namespace DeviceManager.Pages.Login
             if (form.IsValid)
             {
                 pageLoaded = false;
+                try
+                {
+
+                
                 var result = await userRepository.AuthenticateUser(model);
-                if(result.Status && result.User != null)
-				{
+                if (result.Status && result.User != null)
+                {
                     ErrorMessage = string.Empty;
                     if (result.User.SecurityStamp.Equals(configuration.GetValue<string>("ConcurrencyStamp")))
                     {
-						UserId = result.User.Id;
+                        UserId = result.User.Id;
                         IsResetPassword = true;
 
-					}
+                    }
                     else
                     {
                         IsResetPassword = false;
-						var role = await userRepository.GetRoleOfUser(result.User);
+                        var role = await userRepository.GetRoleOfUser(result.User);
                         await protectedLocalStorage.SetAsync("UserLoggedIn", true);
                         await protectedLocalStorage.SetAsync("UserDetails", result.User);
                         await protectedLocalStorage.SetAsync("UserRole", role);
@@ -109,14 +114,19 @@ namespace DeviceManager.Pages.Login
                         navigationManager.NavigateTo("/dashboard", forceLoad: true);
                         Snackbar.Add("Login Successful");
                     }
-                
-                   
+
+
 
                 }
                 else
                 {
                     isError = true;
-					ErrorMessage = "  Invalid Username/Password";
+                    ErrorMessage = "  Invalid Username/Password";
+                }
+                }
+                catch(Exception ex)
+                {
+
                 }
                 pageLoaded = true;
 
