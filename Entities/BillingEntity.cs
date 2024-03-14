@@ -37,6 +37,8 @@ namespace Entities
 
         public bool FoundPatient { get; set; }
 
+        public DateTime? CreateDate { get; set; }
+
     }
 
 }
