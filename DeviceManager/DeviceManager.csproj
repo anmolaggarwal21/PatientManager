@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Pages\Billing\**" />
+    <Content Remove="Pages\Billing\**" />
+    <EmbeddedResource Remove="Pages\Billing\**" />
+    <None Remove="Pages\Billing\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="ElectronNET.API" Version="23.6.1" />
     <PackageReference Include="EPPlus" Version="7.0.8" />
     <PackageReference Include="FluentValidation" Version="11.8.1" />
@@ -64,7 +71,6 @@
 
   <ItemGroup>
     <Folder Include="Pages\Console\" />
-    <Folder Include="Pages\Billing\" />
   </ItemGroup>
 
 </Project>
