@@ -14,7 +14,7 @@ namespace DeviceManager
         public DbSet<PatientEntity> PatientEntities => Set<PatientEntity>();
 		public DbSet<ClaimEntity> ClaimEntities => Set<ClaimEntity>();
         public DbSet<BillingEntity> BillingEntities => Set<BillingEntity>();
-        public DbSet<BillingDetailsEntity> BillingDetailsEntities => Set<BillingDetailsEntity>();
+		public DbSet<BillingDetailsEntity> BillingDetailsEntities => Set<BillingDetailsEntity>();
         protected override void OnModelCreating(ModelBuilder builder)
 		{
 			builder.Entity<PatientEntity>().

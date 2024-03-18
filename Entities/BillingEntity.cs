@@ -23,7 +23,7 @@ namespace Entities
 
         public string? RAndB { get; set; }
         public string? MDVisits { get; set; }
-        public string? RBVisists { get; set; }
+        public string? RNVisits { get; set; }
         public string? LVNVisits { get; set; }
 
         public string? HAVisits { get; set; }
@@ -33,7 +33,7 @@ namespace Entities
         public string? PatientName { get; set; }
 
         public PatientEntity? Patient { get; set; }
-        public BillingDetailsEntity BillingDetails { get; set; }
+        public BillingDetailsEntity? BillingDetails { get; set; }
 
         public bool FoundPatient { get; set; }
 

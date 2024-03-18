@@ -18,6 +18,9 @@ builder.Services.AddScoped<IProviderRepository, ProviderRepository>();
 builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<IClaimRepository, ClaimRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IBillingRepository, BillingRepository>();
+builder.Services.AddScoped<IBillingDetailsRepository, BillingDetailsRepository>();
+
 builder.Services.AddSingleton<StateDetails>();
 builder.Services.AddScoped<IClipboardService, ClipboardService>();
 builder.Services.AddDbContext<PatientManagementDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

@@ -1,5 +1,6 @@
 ﻿using Entities;
 using Microsoft.EntityFrameworkCore;
+using Nextended.Core.Extensions;
 
 namespace DeviceManager.Repository
 {
@@ -62,6 +63,11 @@ namespace DeviceManager.Repository
 
         }
         
+        public async Task<PatientEntity?> GetPatientByNameAndAdmissionDate(string patientName, DateTime admissionDate)
+        {
+           return  ( await _patientManagementDbContext.PatientEntities.ToListAsync()).FirstOrDefault(x => x.FullName.Equals(patientName, StringComparison.OrdinalIgnoreCase) && x.AdmissionDate.Equals(admissionDate));
+            
+        }
 
         public async Task<List<PatientEntity>> GetPatientByProviderId(Guid id)
         {

@@ -5,6 +5,7 @@
 		Provider,
 		Claim,
 		Patient,
-		User
+		User,
+		Billing
 	}
 }

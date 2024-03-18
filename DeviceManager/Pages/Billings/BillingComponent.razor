@@ -25,7 +25,7 @@ else
         <MudDivider />
     </div>
     <div class="mt-4">
-        <MudTable Items="@BillingEntityDto" Dense=true Hover=true Bordered=true Striped=false MultiSelection="false" Filter="new Func<BillingEntityDto,bool>(FilterFunc1)"
+        <MudTable Items="@billingEntityDto" Dense=true Hover=true Bordered=true Striped=false MultiSelection="false" Filter="new Func<BillingEntityDto,bool>(FilterFunc1)"
                   @bind-SelectedItem="selectedItem1" @ref="mudTable">
             <ToolBarContent>
                 <MudText Typo="Typo.h6">Billing</MudText>
@@ -35,51 +35,69 @@ else
             <HeaderContent>
                 <MudTh>Details</MudTh>
                 <MudTh>Patient Name</MudTh>
-                <MudTh>Admission Date</MudTh>
-                <MudTh>Patient Found</MudTh>
-                <MudTh>Actions</MudTh>
+                <MudTh>Date Of Birth</MudTh>
+                <MudTh>Medicare Number</MudTh>
+                <MudTh>Admit Date</MudTh>
+                <MudTh>Diagnose Code</MudTh>
+                <MudTh>Attend Physician</MudTh>
             </HeaderContent>
             <RowTemplate>
 
-                <MudTd><MudIconButton IconSize="Size.Small" IconColor="Color.Primary" Icon="@(context.ShowDetails ? Icons.Material.Filled.ArrowCircleUp :  Icons.Material.Filled.ArrowCircleRight)" OnClick="@( () => OnShowDetails(context.BillingId))"></MudIconButton></MudTd>
-                <MudTd DataLabel="Patient Name">@context.PatientName</MudTd>
-                <MudTd DataLabel="Admission Date">@context.AdmissionDate</MudTd>
-                <MudTd DataLabel="Patient Found">@context.FoundPatient</MudTd>
+                <MudTd><MudIconButton IconSize="Size.Small" IconColor="Color.Primary" Icon="@(context.ShowDetails ? Icons.Material.Filled.ArrowCircleUp :  Icons.Material.Filled.ArrowCircleRight)" OnClick="@( () => OpenPatientBillingDetails(context.BillingId))"></MudIconButton></MudTd>
+                <MudTd DataLabel="Patient Name">@context.Patient!.FullName</MudTd>
+                <MudTd DataLabel="Date Of Birth">@context.Patient!.DOB?.ToString("MM/dd/yyyy")</MudTd>
+                <MudTd DataLabel="Medicare Number"></MudTd>
+                <MudTd DataLabel="Admit Date">@context.Patient.AdmissionDate?.ToString("MM/dd/yyyy")</MudTd>
+                <MudTd DataLabel="Diagnose Code">@context.Patient.DiagnosisCode1</MudTd>
+                <MudTd DataLabel="Attend Physician">@context.Patient.AttendingPhysicianFullName</MudTd>
                 <MudTd>
                     <MudMenu Icon="@Icons.Material.Filled.MoreVert">
                         <MudMenuItem IconSize="Size.Small" IconColor="Color.Primary" Icon="@Icons.Material.Filled.Edit" OnClick="@( () => OnEditClick(context.BillingId))">Edit</MudMenuItem>
 
                         <MudMenuItem IconSize="Size.Small" IconColor="Color.Secondary" Icon="@Icons.Material.Filled.Delete" OnClick="@( () => OnDeleteClick(context.BillingId))">Delete</MudMenuItem>
+                        <MudMenuItem IconSize="Size.Small" IconColor="Color.Tertiary" Icon="@Icons.Material.Filled.Output" OnClick="@( () => GetCobolFormat(context))">Console Output</MudMenuItem>
 
                     </MudMenu>
                 </MudTd>
             </RowTemplate>
             <ChildRowContent>
                 <MudTr>
-                    <td colspan="6">
+               @*      <td colspan="6">
                         @if (context.ShowDetails)
                         {
-                            <MudTable Items="@context.TypeDetails" Context="TypeDetailsContext" Hover="true" Breakpoint="Breakpoint.Sm" Elevation="0">
+                            <MudTable Items="@context.TypeDetails" Context="TypeDetails" Hover="true" Breakpoint="Breakpoint.Sm" Elevation="0">
 
                                 <HeaderContent>
-                                    <MudTh>Type</MudTh>
-                                    <MudTh>AdmissionDate</MudTh>
-                                    <MudTh>Start No Of Days</MudTh>
-                                    <MudTh>End No Of Days</MudTh>
-                                    <MudTh>Amount</MudTh>
-                                    <MudTh>Code</MudTh>
+                                    <MudTh>Patient</MudTh>
+                                    <MudTh>POS</MudTh>
+                                    <MudTh>Care Day</MudTh>
+                                    <MudTh>Payer</MudTh>
+                                    <MudTh>R & B</MudTh>
+                                    <MudTh>MD Visits</MudTh>
+                                    <MudTh>RN Visits</MudTh>
+                                    <MudTh>LVN Visits</MudTh>
+                                    <MudTh>HA Visits</MudTh>
+                                    <MudTh>SW Visits</MudTh>
+                                    <MudTh>SW Phone</MudTh>
+                                    <MudTh>SC Visits</MudTh>
                                 </HeaderContent>
                                 <RowTemplate>
-                                    <MudTd DataLabel="Type">@TypeDetailsContext.Type</MudTd>
-                                    <MudTd DataLabel="AdmissionDate">@TypeDetailsContext.AdmissionDate</MudTd>
-                                    <MudTd DataLabel="Start No Of Days">@TypeDetailsContext.NoOfDays1</MudTd>
-                                    <MudTd DataLabel="End No Of Days">@TypeDetailsContext.NoOfDays2</MudTd>
-                                    <MudTd DataLabel="Amount">@TypeDetailsContext.Amount</MudTd>
-                                    <MudTd DataLabel="Code">@TypeDetailsContext.Code</MudTd>
+                                    <MudTd DataLabel="Patient">@TypeDetails.PatientDetails</MudTd>
+                                    <MudTd DataLabel="POS">@TypeDetails.POS</MudTd>
+                                    <MudTd DataLabel="Care Day">@TypeDetails.CareDay</MudTd>
+                                    <MudTd DataLabel="Payer">@TypeDetails.Payer</MudTd>
+                                    <MudTd DataLabel="R & B">@TypeDetails.RAndB</MudTd>
+                                    <MudTd DataLabel="MD Visits">@TypeDetails.MDVisits</MudTd>
+                                    <MudTd DataLabel="RN Visits">@TypeDetails.RNVisits</MudTd>
+                                    <MudTd DataLabel="LVN Visits">@TypeDetails.LVNVisits</MudTd>
+                                    <MudTd DataLabel="HA Visits">@TypeDetails.HAVisits</MudTd>
+                                    <MudTd DataLabel="SW Visits">@TypeDetails.SWVisits</MudTd>
+                                    <MudTd DataLabel="SW Phone">@TypeDetails.SWWPHone</MudTd>
+                                    <MudTd DataLabel="SC Visits">@TypeDetails.SCVisists</MudTd>
                                 </RowTemplate>
                             </MudTable>
                         }
-                    </td>
+                    </td> *@
                 </MudTr>
             </ChildRowContent>
             <PagerContent>

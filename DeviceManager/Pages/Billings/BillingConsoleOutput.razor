@@ -1,0 +1,38 @@
+﻿@inherits BillingConsoleOutputBase
+
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Info" Class="mr-3 mb-n1" />
+            Patient Billing Amount
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <div class="d-flex flex-column py-1">
+            <MudTable Items="@billingAmountDetails" Dense=true Hover=true Bordered=true Striped=false MultiSelection=false>
+                <HeaderContent>
+                    <MudTh>Code</MudTh>
+                    <MudTh>Start No of days</MudTh>
+                    <MudTh>End No Of Days</MudTh>
+                    <MudTh>Cost</MudTh>
+                    <MudTh>Date</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+
+
+                    <MudTd DataLabel="Code">@context.Code</MudTd>
+                    <MudTd DataLabel="Start No of days">@context.StartNoOfDays</MudTd>
+                    <MudTd DataLabel="End No Of Days">@context.EndNoOfDays</MudTd>
+                    <MudTd DataLabel="Cost">@context.Amount</MudTd>
+                    <MudTd DataLabel="Date">@context.AdmitDate!?.ToString("MM/dd/yyyy")</MudTd>
+
+                </RowTemplate>
+
+            </MudTable>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="@Color" Variant="Variant.Filled" OnClick="Submit">@ButtonText</MudButton>
+    </DialogActions>
+</MudDialog>

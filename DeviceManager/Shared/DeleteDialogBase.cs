@@ -24,6 +24,7 @@ namespace DeviceManager.Shared
 		[Inject] IPatientRepository patientRepository { get; set; }
 		[Inject] IClaimRepository claimRepository { get; set; }
 		[Inject] IUserRepository userRepository { get; set; }
+		[Inject] IBillingRepository billingRepository { get; set; }
 		[Inject]
         NavigationManager navigationManager { get; set; }
         protected async Task Submit()
@@ -55,9 +56,16 @@ namespace DeviceManager.Shared
 					}
 
 					break;
-					case EntityTypeEnum.User:
+				case EntityTypeEnum.User:
 					await userRepository.DeleteUser(Id);
 					navigationManager.NavigateTo("/user", true);
+					break;
+				case EntityTypeEnum.Billing:
+					if (Guid.TryParse(Id, out Guid billingId))
+					{
+						await billingRepository.DeleteBilling(billingId);
+						navigationManager.NavigateTo("/billing", true);
+					}
 					break;
 
 			}

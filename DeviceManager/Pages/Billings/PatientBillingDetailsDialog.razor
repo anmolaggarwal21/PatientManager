@@ -1,0 +1,46 @@
+﻿@inherits PatientBillingDetailsDialogBase
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Info" Class="mr-3 mb-n1" />
+            Patient Billing
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <div class="d-flex flex-column py-1">
+            <MudTable Items="@billingDetails!.TypeDetails" Context="TypeDetails" Dense=true Hover=true Bordered=true Striped=false MultiSelection="false">
+                <HeaderContent>
+                    <MudTh>Patient</MudTh>
+                    <MudTh>POS</MudTh>
+                    <MudTh>Care Day</MudTh>
+                    <MudTh>Payer</MudTh>
+                    <MudTh>R & B</MudTh>
+                    <MudTh>MD Visits</MudTh>
+                    <MudTh>RN Visits</MudTh>
+                    <MudTh>LVN Visits</MudTh>
+                    <MudTh>HA Visits</MudTh>
+                    <MudTh>SW Visits</MudTh>
+                    <MudTh>SW Phone</MudTh>
+                    <MudTh>SC Visits</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Patient">@TypeDetails.PatientDetails</MudTd>
+                    <MudTd DataLabel="POS">@TypeDetails.POS</MudTd>
+                    <MudTd DataLabel="Care Day">@TypeDetails.CareDay</MudTd>
+                    <MudTd DataLabel="Payer">@TypeDetails.Payer</MudTd>
+                    <MudTd DataLabel="R & B">@TypeDetails.RAndB</MudTd>
+                    <MudTd DataLabel="MD Visits">@TypeDetails.MDVisits</MudTd>
+                    <MudTd DataLabel="RN Visits">@TypeDetails.RNVisits</MudTd>
+                    <MudTd DataLabel="LVN Visits">@TypeDetails.LVNVisits</MudTd>
+                    <MudTd DataLabel="HA Visits">@TypeDetails.HAVisits</MudTd>
+                    <MudTd DataLabel="SW Visits">@TypeDetails.SWVisits</MudTd>
+                    <MudTd DataLabel="SW Phone">@TypeDetails.SWWPHone</MudTd>
+                    <MudTd DataLabel="SC Visits">@TypeDetails.SCVisists</MudTd>
+                </RowTemplate>
+            </MudTable>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Close</MudButton>
+    </DialogActions>
+</MudDialog>

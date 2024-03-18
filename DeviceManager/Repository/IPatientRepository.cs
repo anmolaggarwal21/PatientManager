@@ -11,5 +11,6 @@ namespace DeviceManager.Repository
         Task<bool> UpdatePatient(PatientEntity patientEntity);
 
         Task<List<PatientEntity>> GetPatientByProviderId(Guid id);
+        Task<PatientEntity?> GetPatientByNameAndAdmissionDate(string patientName, DateTime admissionDate);
     }
 }

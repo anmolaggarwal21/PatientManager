@@ -1,0 +1,59 @@
+﻿@page "/editbilling/{BillingId}"
+
+@using Entities;
+
+@inherits EditBillingComponentBase
+<h3>Edit Billing</h3>
+@if (!pageLoaded)
+{
+    <MudProgressLinear Color="Color.Default" Indeterminate="true" />
+}
+else
+{
+
+
+	<MudCard>
+		<MudForm Model="@billingEntityDto.BillingDetails" @ref="@form" >
+			<MudCardContent>
+				<MudTextField @bind-Value="billingEntityDto.BillingDetails.BenefitPeriod"
+							  For="@(() => billingEntityDto.BillingDetails.BenefitPeriod)"
+							  Immediate="true"
+							  Label="Benefit Period" />
+				<MudDatePicker @bind-Date="billingEntityDto.BillingDetails.FieldTwentySeven"
+							   For="@(() => billingEntityDto.BillingDetails.FieldTwentySeven)"
+							   Label="Select Date Twenty Seven" Editable="true" Mask="@(new DateMask("MM/dd/yyyy"))" DateFormat="MM/dd/yyyy"></MudDatePicker>
+				<MudDatePicker @bind-Date="billingEntityDto.BillingDetails.FromFieldSeventySeven"
+							   For="@(() => billingEntityDto.BillingDetails.FromFieldSeventySeven)"
+							   Label="Select Date From Seventy Seven" Editable="true" Mask="@(new DateMask("MM/dd/yyyy"))" DateFormat="MM/dd/yyyy"></MudDatePicker>
+				<MudDatePicker @bind-Date="billingEntityDto.BillingDetails.ToFieldSeventySeven"
+							   For="@(() => billingEntityDto.BillingDetails.ToFieldSeventySeven)"
+							   Label="Select Date To Seventy Seven" Editable="true" Mask="@(new DateMask("MM/dd/yyyy"))" DateFormat="MM/dd/yyyy"></MudDatePicker>
+
+				<MudDatePicker @bind-Date="billingEntityDto.BillingDetails.FieldEOC"
+							   For="@(() => billingEntityDto.BillingDetails.FieldEOC)"
+							   Label="Select EOC" Editable="true" Mask="@(new DateMask("MM/dd/yyyy"))" DateFormat="MM/dd/yyyy"></MudDatePicker>
+
+				@* <MudSelect T="GenderEnum" Label="Gender" AnchorOrigin="Origin.BottomCenter" @bind-Value="model.Gender">
+					@foreach (var value in genderTypes)
+					{
+						<MudSelectItem T="GenderEnum" Value="@value">
+							@value.ToString()
+						</MudSelectItem>
+					}
+				</MudSelect> *@
+
+				<MudTextField @bind-Value="billingEntityDto.BillingDetails.FieldRX"
+							  For="@(() => billingEntityDto.BillingDetails.FieldRX)"
+							  Immediate="true" Label="Rx" />
+
+
+			</MudCardContent>
+
+		</MudForm>
+		<MudCardActions>
+
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(async () => await Submit())" Class="mr-4">Create</MudButton>
+			<MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@Cancel">Cancel</MudButton>
+		</MudCardActions>
+	</MudCard>
+}
